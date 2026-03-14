@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="popup.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23238636%22/><path d=%22M25 25h20v20H25zM55 25h20v20H55zM25 55h20v20H25zM65 55h10v10H65zM55 65h10v10H55z%22 fill=%22white%22/></svg>">
+    <title>QR Generator</title>
+    <style>body { padding-top: 60px !important; }</style>
+</head>
+
+<body>
+    <a href="../index.html" style="position:fixed; top:20px; left:20px; z-index:9999; background:var(--card-bg); padding:10px 20px; border-radius:14px; text-decoration:none; color:var(--text-color); font-weight:600; font-size:14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border:1px solid var(--border-color); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); transition: all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)'">← Back</a>
+
+    <div class="container">
+        <header>
+            <h1>QR Generator</h1>
+        </header>
+        <main>
+            <div class="qr-container">
+                <canvas id="qr"></canvas>
+            </div>
+            <div class="input-group">
+                <input type="text" id="text-input" placeholder="Type something or use current URL..."
+                    spellcheck="false">
+                <button id="copy-btn" title="Copy QR Code Image">Copy Image</button>
+                <button id="download-btn" title="Download QR Code Image">Download Image</button>
+            </div>
+            <div class="short-url-container" id="short-url-container" style="display: none;">
+                <input type="text" id="short-url-input" readonly title="Short URL">
+                <button id="copy-url-btn" title="Copy Short URL">Copy URL</button>
+            </div>
+        </main>
+        <footer>
+            <div class="status" id="status-text">Generating...</div>
+        </footer>
+    </div>
+    <script src="lib/qrious.min.js"></script>
+    <script src="popup.js"></script>
+</body>
+
+</html>
