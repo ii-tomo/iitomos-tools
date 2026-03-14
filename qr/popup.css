@@ -100,6 +100,7 @@ h1 {
     margin-bottom: 2rem;
     background: var(--primary-grad);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -1px;
 }
@@ -129,17 +130,20 @@ h1 {
     width: 100%;
     padding: 1.2rem;
     border-radius: 18px;
-    border: 1px solid var(--card-border);
-    background: rgba(0, 0, 0, 0.2);
-    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.95); /* Bright white input */
+    color: #0f172a; /* Dark text for contrast */
     font-size: 1rem;
+    font-weight: 500;
     outline: none;
     transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 #text-input:focus {
     border-color: #00c6ff;
-    box-shadow: 0 0 15px rgba(0, 198, 255, 0.3);
+    background: #ffffff;
+    box-shadow: 0 0 20px rgba(0, 198, 255, 0.4);
 }
 
 button {
@@ -147,31 +151,35 @@ button {
     padding: 1.1rem;
     border-radius: 18px;
     border: none;
-    font-weight: 700;
-    font-size: 1rem;
+    font-weight: 800;
+    font-size: 1.1rem;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 #copy-btn {
-    background: var(--primary-grad);
+    background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
     color: white;
-    box-shadow: 0 10px 20px -5px rgba(0, 114, 255, 0.5);
+    box-shadow: 0 10px 25px -5px rgba(58, 123, 213, 0.5);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 #copy-btn:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 15px 25px -5px rgba(0, 114, 255, 0.6);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 35px -5px rgba(58, 123, 213, 0.6);
 }
 
 #download-btn {
-    background: rgba(255, 255, 255, 0.05);
-    color: white;
-    border: 1px solid var(--card-border);
+    background: #ffffff; /* Solid white button */
+    color: #0f172a; /* Dark text */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
 }
 
 #download-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.4);
 }
 
 .status {
