@@ -10,7 +10,202 @@ document.addEventListener('DOMContentLoaded', () => {
     const lineBanner = document.getElementById('line-browser-banner');
     const openExternalBtn = document.getElementById('open-external-btn');
 
-    // Detect LINE Browser
+    // --- Tab Switching ---
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+
+            btn.classList.add('active');
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+            
+            statusText.textContent = tabId === 'generator' ? (textInput.value ? `Length: ${textInput.value.length} characters` : 'Ready') : 'Ready to read QR';
+        });
+    });
+
+    // --- Reader Logic ---
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const readerResult = document.getElementById('reader-result');
+    const readerResultContainer = document.getElementById('reader-result-container');
+    const copyReaderResultBtn = document.getElementById('copy-reader-result-btn');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'));
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFile(files[0]);
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFile(e.target.files[0]);
+        }
+    });
+
+    function handleFile(file) {
+        if (!file.type.startsWith('image/')) {
+            alert('Please upload an image file.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                decodeQR(img);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function decodeQR(img) {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0, img.width, img.height);
+
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+        if (code) {
+            handleDecodedData(code.data);
+        } else {
+            alert('Could not find a QR code in this image.');
+            statusText.textContent = 'QR decoding failed';
+        }
+    }
+
+    // --- Camera Scanner Logic ---
+    const startCameraBtn = document.getElementById('start-camera-btn');
+    const cameraContainer = document.getElementById('camera-container');
+    const cameraPreview = document.getElementById('camera-preview');
+    let videoStream = null;
+    let isScanning = false;
+
+    startCameraBtn.addEventListener('click', () => {
+        if (!isScanning) {
+            startCamera();
+        } else {
+            stopCamera();
+        }
+    });
+
+    async function startCamera() {
+        try {
+            const constraints = {
+                video: { facingMode: 'environment' }
+            };
+            videoStream = await navigator.mediaDevices.getUserMedia(constraints);
+            cameraPreview.srcObject = videoStream;
+            cameraPreview.setAttribute('playsinline', true); // Fullscreen fix
+            cameraPreview.play();
+            
+            cameraContainer.style.display = 'block';
+            isScanning = true;
+            startCameraBtn.innerHTML = '<i class="fa-solid fa-stop"></i> Stop Camera';
+            startCameraBtn.style.background = 'rgba(239, 68, 68, 0.2)';
+            startCameraBtn.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+            statusText.textContent = 'Scanning...';
+
+            requestAnimationFrame(tick);
+        } catch (err) {
+            console.error('Error starting camera:', err);
+            alert('Could not access camera. Please check permissions.');
+            statusText.textContent = 'Camera access denied';
+        }
+    }
+
+    function stopCamera() {
+        if (videoStream) {
+            videoStream.getTracks().forEach(track => track.stop());
+            videoStream = null;
+        }
+        cameraContainer.style.display = 'none';
+        isScanning = false;
+        startCameraBtn.innerHTML = '<i class="fa-solid fa-camera"></i> Scan with Camera';
+        startCameraBtn.style.background = '';
+        startCameraBtn.style.borderColor = '';
+        statusText.textContent = 'Reader Ready';
+    }
+
+    function tick() {
+        if (!isScanning) return;
+
+        if (cameraPreview.readyState === cameraPreview.HAVE_ENOUGH_DATA) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d', { willReadFrequently: true });
+            canvas.width = cameraPreview.videoWidth;
+            canvas.height = cameraPreview.videoHeight;
+            context.drawImage(cameraPreview, 0, 0, canvas.width, canvas.height);
+
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: 'dontInvert',
+            });
+
+            if (code) {
+                // Success!
+                handleDecodedData(code.data);
+                stopCamera();
+                return; // Stop the loop
+            }
+        }
+        requestAnimationFrame(tick);
+    }
+
+    function handleDecodedData(data) {
+        readerResult.value = data;
+        readerResultContainer.style.display = 'block';
+        statusText.textContent = 'QR Code decoded successfully!';
+
+        if (isValidUrl(data)) {
+            statusText.textContent += ' | Generating short URL...';
+            generateShortUrl(data, 'reader-short-url-container', 'reader-short-url-input');
+        } else {
+            document.getElementById('reader-short-url-container').style.display = 'none';
+        }
+
+        readerResultContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    copyReaderResultBtn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(readerResult.value);
+            const originalBtnText = copyReaderResultBtn.textContent;
+            copyReaderResultBtn.textContent = 'Copied!';
+            copyReaderResultBtn.style.background = '#28a745';
+
+            setTimeout(() => {
+                copyReaderResultBtn.textContent = originalBtnText;
+                copyReaderResultBtn.style.background = '';
+            }, 2000);
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+            statusText.textContent = 'Failed to copy text';
+        }
+    });
+
+    // --- Original Generator Logic ---
     const isLineBrowser = /Line/i.test(navigator.userAgent);
     if (isLineBrowser) {
         lineBanner.style.display = 'block';
@@ -52,13 +247,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function generateShortUrl(url) {
+    async function generateShortUrl(url, targetContainerId, targetInputId) {
         try {
             const response = await fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(url)}`);
             const data = await response.json();
             if (data.shorturl) {
-                const container = document.getElementById('short-url-container');
-                const input = document.getElementById('short-url-input');
+                const container = document.getElementById(targetContainerId);
+                const input = document.getElementById(targetInputId);
                 input.value = data.shorturl;
                 container.style.display = 'flex';
                 statusText.textContent = statusText.textContent.replace(' | Generating short URL...', ' | Short URL generated');
@@ -67,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Error shortening URL:', error);
-            document.getElementById('short-url-container').style.display = 'none';
+            document.getElementById(targetContainerId).style.display = 'none';
             statusText.textContent = statusText.textContent.replace(' | Generating short URL...', ' | Short URL failed');
         }
     }
@@ -96,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(shortUrlTimeout);
         if (isValidUrl(text)) {
             statusText.textContent += ' | Generating short URL...';
-            shortUrlTimeout = setTimeout(() => generateShortUrl(finalValue), 500);
+            shortUrlTimeout = setTimeout(() => generateShortUrl(finalValue, 'short-url-container', 'short-url-input'), 500);
         } else {
             document.getElementById('short-url-container').style.display = 'none';
         }
@@ -161,6 +356,28 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error('Failed to copy URL: ', err);
             statusText.textContent = 'Failed to copy URL';
+        }
+    });
+
+    // Reader short URL copy logic
+    const readerCopyUrlBtn = document.getElementById('reader-copy-url-btn');
+    const readerShortUrlInput = document.getElementById('reader-short-url-input');
+
+    readerCopyUrlBtn.addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(readerShortUrlInput.value);
+
+            const originalBtnText = readerCopyUrlBtn.textContent;
+            readerCopyUrlBtn.textContent = 'Copied!';
+            readerCopyUrlBtn.style.backgroundColor = '#2ea043';
+
+            setTimeout(() => {
+                readerCopyUrlBtn.textContent = originalBtnText;
+                readerCopyUrlBtn.style.backgroundColor = '';
+            }, 2000);
+        } catch (err) {
+            console.error('Failed to copy short URL: ', err);
+            statusText.textContent = 'Failed to copy short URL';
         }
     });
 });

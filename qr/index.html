@@ -24,43 +24,101 @@
 
     <div class="container">
         <header>
-            <h1>QR Generator</h1>
+            <h1>QR Tool</h1>
+            <nav class="tabs">
+                <button class="tab-btn active" data-tab="generator">
+                    <i class="fa-solid fa-qrcode"></i> Generate
+                </button>
+                <button class="tab-btn" data-tab="reader">
+                    <i class="fa-solid fa-camera"></i> Read
+                </button>
+            </nav>
         </header>
+
         <main>
             <div id="line-browser-banner" class="line-banner" style="display: none;">
                 <p><i class="fa-brands fa-line"></i> LINE内蔵ブラウザでは一部機能が制限されます。</p>
                 <button id="open-external-btn">外部ブラウザで開く</button>
             </div>
-            <div class="qr-container">
-                <canvas id="qr"></canvas>
-            </div>
-            <div class="option-group">
-                <label class="checkbox-container">
-                    <input type="checkbox" id="external-browser-option">
-                    <span class="checkmark"></span>
-                    外部ブラウザで開く
-                </label>
-            </div>
-            <div class="input-group">
-                <input type="text" id="text-input" placeholder="Type something or use current URL..."
-                    spellcheck="false">
-                <div class="action-buttons">
-                    <button id="copy-btn" title="Copy QR Code Image">Copy Image</button>
-                    <button id="download-btn" title="Download QR Code Image">Download Image</button>
+
+            <!-- Generator Tab Content -->
+            <div id="generator-tab" class="tab-content active">
+                <div class="qr-container">
+                    <canvas id="qr"></canvas>
+                </div>
+                <div class="option-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="external-browser-option">
+                        <span class="checkmark"></span>
+                        外部ブラウザで開く
+                    </label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="text-input" placeholder="Type something or use current URL..."
+                        spellcheck="false">
+                    <div class="action-buttons">
+                        <button id="copy-btn" title="Copy QR Code Image">Copy Image</button>
+                        <button id="download-btn" title="Download QR Code Image">Download Image</button>
+                    </div>
+                </div>
+                <div class="short-url-container" id="short-url-container" style="display: none;">
+                    <div class="short-url-container-inner">
+                        <input type="text" id="short-url-input" readonly title="Short URL">
+                        <button id="copy-url-btn" title="Copy Short URL">Copy URL</button>
+                    </div>
                 </div>
             </div>
-            <div class="short-url-container" id="short-url-container" style="display: none;">
-                <div class="short-url-container-inner">
-                    <input type="text" id="short-url-input" readonly title="Short URL">
-                    <button id="copy-url-btn" title="Copy Short URL">Copy URL</button>
+
+            <!-- Reader Tab Content -->
+            <div id="reader-tab" class="tab-content">
+                <div class="reader-actions">
+                    <button id="start-camera-btn" class="secondary-btn">
+                        <i class="fa-solid fa-camera"></i> Scan with Camera
+                    </button>
+                </div>
+
+                <div id="camera-container" class="camera-container" style="display: none;">
+                    <video id="camera-preview" playsinline></video>
+                    <div class="scan-overlay">
+                        <div class="scan-line"></div>
+                        <div class="corner top-left"></div>
+                        <div class="corner top-right"></div>
+                        <div class="corner bottom-left"></div>
+                        <div class="corner bottom-right"></div>
+                    </div>
+                </div>
+
+                <div class="upload-container" id="drop-zone">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <p>Drag & drop QR image or click to upload</p>
+                    <input type="file" id="file-input" accept="image/*" hidden>
+                </div>
+                <div id="reader-result-container" class="result-container" style="display: none;">
+                    <h3>Decoded Content:</h3>
+                    <div class="result-box">
+                        <textarea id="reader-result" readonly></textarea>
+                        <button id="copy-reader-result-btn">Copy Link</button>
+                    </div>
+                </div>
+                <!-- Reader Short URL Section -->
+                <div class="short-url-container" id="reader-short-url-container" style="display: none;">
+                    <div class="short-url-container-inner">
+                        <input type="text" id="reader-short-url-input" readonly title="Short URL">
+                        <button id="reader-copy-url-btn" title="Copy Short URL">Copy URL</button>
+                    </div>
                 </div>
             </div>
         </main>
+
         <footer>
-            <div class="status" id="status-text">Generating...</div>
+            <div class="status-container">
+                <div class="status" id="status-text">Ready</div>
+                <div class="version">v1.2.0</div>
+            </div>
         </footer>
     </div>
     <script src="lib/qrious.min.js"></script>
+    <script src="lib/jsQR.min.js"></script>
     <script src="popup.js"></script>
 </body>
 
