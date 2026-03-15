@@ -1,14 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
     const sourceText = document.getElementById('source-text');
-    const targetTextDisplay = document.getElementById('target-text-display');
-    const translateBtn = document.getElementById('translate-btn');
+    const englishResult = document.getElementById('english-result');
+    const japaneseResult = document.getElementById('japanese-result');
     const swapBtn = document.getElementById('swap-langs');
     const clearBtn = document.getElementById('clear-btn');
-    const copyBtn = document.getElementById('copy-result-btn');
+    const copyEnBtn = document.getElementById('copy-en-btn');
+    const copyJaBtn = document.getElementById('copy-ja-btn');
     const charCount = document.getElementById('char-count');
     const toast = document.getElementById('toast');
     const lineBanner = document.getElementById('line-browser-banner');
     const openExternalBtn = document.getElementById('open-external-btn');
+    const updateOriginalBtn = document.getElementById('update-original-btn');
+    const statusIndicator = document.getElementById('status-indicator');
 
     const langBoxes = document.querySelectorAll('.lang-box');
 
@@ -17,30 +20,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Detect LINE Browser
     const isLineBrowser = /Line/i.test(navigator.userAgent);
-    if (isLineBrowser) {
+    if (isLineBrowser && lineBanner) {
         lineBanner.style.display = 'block';
     }
 
-    openExternalBtn.addEventListener('click', () => {
-        const url = new URL(window.location.href);
-        url.searchParams.set('openExternalBrowser', '1');
-        window.location.href = url.toString();
-    });
+    if (openExternalBtn) {
+        openExternalBtn.addEventListener('click', () => {
+            const url = new URL(window.location.href);
+            url.searchParams.set('openExternalBrowser', '1');
+            window.location.href = url.toString();
+        });
+    }
 
-    // Language Swapping
+    function hasJapanese(text) {
+        return /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/.test(text);
+    }
+
     swapBtn.addEventListener('click', () => {
         [sourceLang, targetLang] = [targetLang, sourceLang];
         updateLangUI();
         
-        // Swap text content if both exist
         const currentSource = sourceText.value;
-        const currentTarget = targetTextDisplay.textContent;
+        const currentEn = englishResult.value;
+        const currentJa = japaneseResult.value;
         
-        if (!targetTextDisplay.classList.contains('empty')) {
-            sourceText.value = currentTarget;
-            targetTextDisplay.textContent = currentSource || '翻訳結果がここに表示されます';
-            if (!currentSource) targetTextDisplay.classList.add('empty');
-            updateCharCount();
+        if (currentEn || currentJa) {
+            // Swap logic: if we were in JA->EN, source was currentJa, now swapping.
+            // Actually simpler to just re-translate current source with NEW langs
+            performTranslation(currentSource);
         }
     });
 
@@ -54,99 +61,147 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         sourceText.placeholder = sourceLang === 'ja' ? '翻訳したいテキストを入力...' : 'Enter text to translate...';
-        if (targetTextDisplay.classList.contains('empty')) {
-            targetTextDisplay.textContent = sourceLang === 'ja' ? '翻訳結果がここに表示されます' : 'Translation result will appear here';
-        }
     }
 
-    // Character Count
+    function updateCharCount() {
+        if (!charCount) return;
+        const len = sourceText.value.length;
+        charCount.textContent = `${len} / 5000`;
+        charCount.style.color = len > 5000 ? '#ff4d4d' : '';
+    }
+
+    let debounceTimer;
     sourceText.addEventListener('input', () => {
         updateCharCount();
         saveDraft();
+        
+        clearTimeout(debounceTimer);
+        const text = sourceText.value.trim();
+        if (text) {
+            debounceTimer = setTimeout(() => {
+                if (hasJapanese(text)) {
+                    sourceLang = 'ja';
+                    targetLang = 'en';
+                } else {
+                    sourceLang = 'en';
+                    targetLang = 'ja';
+                }
+                updateLangUI();
+                performTranslation(text);
+            }, 800);
+        } else {
+            clearResults();
+        }
     });
 
-    function updateCharCount() {
-        const len = sourceText.value.length;
-        charCount.textContent = `${len} / 5000`;
-        if (len > 5000) {
-            charCount.style.color = '#ff4d4d';
-        } else {
-            charCount.style.color = '';
+    async function performTranslation(text) {
+        if (!text) return;
+        
+        statusIndicator.classList.add('active');
+
+        try {
+            const result = await translateApi(text, 'auto', targetLang);
+            
+            if (targetLang === 'en') {
+                englishResult.value = result;
+                japaneseResult.value = text;
+            } else {
+                englishResult.value = text;
+                japaneseResult.value = result;
+            }
+            
+            englishResult.classList.remove('empty');
+            japaneseResult.classList.remove('empty');
+            saveDraft();
+        } catch (error) {
+            console.error('Translation error:', error);
+        } finally {
+            statusIndicator.classList.remove('active');
         }
     }
 
-    // Clear Text
+    function clearResults() {
+        englishResult.value = '';
+        japaneseResult.value = '';
+        englishResult.classList.add('empty');
+        japaneseResult.classList.add('empty');
+    }
+
     clearBtn.addEventListener('click', () => {
         sourceText.value = '';
-        targetTextDisplay.textContent = sourceLang === 'ja' ? '翻訳結果がここに表示されます' : 'Translation result will appear here';
-        targetTextDisplay.classList.add('empty');
+        clearResults();
         updateCharCount();
         saveDraft();
     });
 
-    // Copy Result
-    copyBtn.addEventListener('click', () => {
-        if (targetTextDisplay.classList.contains('empty')) return;
-        
-        navigator.clipboard.writeText(targetTextDisplay.textContent).then(() => {
-            showToast();
-        });
+    copyEnBtn.addEventListener('click', () => {
+        if (englishResult.classList.contains('empty')) return;
+        navigator.clipboard.writeText(englishResult.value).then(() => showToast('English copied!'));
     });
 
-    function showToast() {
+    copyJaBtn.addEventListener('click', () => {
+        if (japaneseResult.classList.contains('empty')) return;
+        navigator.clipboard.writeText(japaneseResult.value).then(() => showToast('Japanese copied!'));
+    });
+
+    updateOriginalBtn.addEventListener('click', async () => {
+        const revisedJa = japaneseResult.value.trim();
+        if (!revisedJa) return;
+
+        updateOriginalBtn.disabled = true;
+        const originalContent = updateOriginalBtn.innerHTML;
+        updateOriginalBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refining...';
+
+        try {
+            // Reflect revised JA back to source and re-translate to EN
+            sourceText.value = revisedJa;
+            updateCharCount();
+            
+            sourceLang = 'ja';
+            targetLang = 'en';
+            updateLangUI();
+            
+            await performTranslation(revisedJa);
+            
+            sourceText.style.animation = 'flash 1s';
+            setTimeout(() => sourceText.style.animation = '', 1000);
+        } catch (error) {
+            console.error('Refinement error:', error);
+            alert('更新に失敗しました。');
+        } finally {
+            updateOriginalBtn.disabled = false;
+            updateOriginalBtn.innerHTML = originalContent;
+        }
+    });
+
+    function showToast(msg) {
+        if (!toast) return;
+        toast.textContent = msg || 'COPIED!';
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 2000);
     }
 
-    // Translation Logic
-    translateBtn.addEventListener('click', async () => {
-        const text = sourceText.value.trim();
-        if (!text) return;
-
-        translateBtn.disabled = true;
-        const originalContent = translateBtn.innerHTML;
-        translateBtn.innerHTML = '<span>Translating...</span><i class="fas fa-spinner fa-spin"></i>';
-
-        try {
-            const result = await translateApi(text, sourceLang, targetLang);
-            targetTextDisplay.textContent = result;
-            targetTextDisplay.classList.remove('empty');
-            saveDraft();
-        } catch (error) {
-            console.error('Translation error:', error);
-            alert('翻訳に失敗しました。時間をおいて再度お試しください。');
-        } finally {
-            translateBtn.disabled = false;
-            translateBtn.innerHTML = originalContent;
-        }
-    });
-
     async function translateApi(text, sl, tl) {
-        // Using Google Translate free endpoint (client=gtx)
-        // This is usually more stable than direct scraping but has rate limits
         const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(text)}`;
-        
         const response = await fetch(url);
         if (!response.ok) throw new Error('API response error');
-        
         const data = await response.json();
-        // data[0] contains the translated segments
         return data[0].map(segment => segment[0]).join('');
     }
 
-    // Persistence
     function saveDraft() {
         const draft = {
             text: sourceText.value,
             sl: sourceLang,
             tl: targetLang,
-            result: targetTextDisplay.classList.contains('empty') ? '' : targetTextDisplay.textContent
+            en: englishResult.value,
+            ja: japaneseResult.value
         };
-        localStorage.setItem('translator_draft', JSON.stringify(draft));
+        localStorage.setItem('translator_draft_v2', JSON.stringify(draft));
     }
 
     function loadDraft() {
-        const saved = localStorage.getItem('translator_draft');
+        const saved = localStorage.getItem('translator_draft_v2');
         if (saved) {
             try {
                 const draft = JSON.parse(saved);
@@ -154,10 +209,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 sourceLang = draft.sl || 'ja';
                 targetLang = draft.tl || 'en';
                 
-                if (draft.result) {
-                    targetTextDisplay.textContent = draft.result;
-                    targetTextDisplay.classList.remove('empty');
-                }
+                englishResult.value = draft.en || '';
+                japaneseResult.value = draft.ja || '';
+                
+                if (draft.en) englishResult.classList.remove('empty');
+                if (draft.ja) japaneseResult.classList.remove('empty');
                 
                 updateLangUI();
                 updateCharCount();
@@ -167,5 +223,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    loadDraft();
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes flash {
+            0% { background-color: rgba(168, 85, 247, 0.4); }
+            100% { background-color: transparent; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // loadDraft(); // Removed to clear content on reload
 });

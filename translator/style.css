@@ -223,7 +223,7 @@ textarea {
     word-break: break-word;
 }
 
-.target-display.empty {
+#target-text-display.empty {
     color: var(--text-dim);
     font-style: italic;
 }
@@ -235,6 +235,75 @@ textarea {
     padding: 0.8rem 1.2rem;
     background: rgba(0, 0, 0, 0.2);
     border-top: 1px solid var(--card-border);
+}
+
+.status-indicator {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--accent);
+    background: rgba(168, 85, 247, 0.1);
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.status-indicator.active {
+    display: flex;
+    animation: pulse 1.5s infinite;
+}
+
+.output-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.output-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.output-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    padding-left: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .output-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+.secondary-action-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--card-border);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.secondary-action-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.secondary-action-btn i {
+    font-size: 0.8rem;
+    color: #a855f7;
 }
 
 #char-count {

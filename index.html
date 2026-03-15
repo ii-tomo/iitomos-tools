@@ -24,8 +24,13 @@
                 <p><i class="fa-brands fa-line"></i> LINE内蔵ブラウザでは一部機能が制限されます。</p>
                 <button id="open-external-btn">外部ブラウザで開く</button>
             </div>
-            <h1>iitomo's <span class="gradient-text">Tools</span></h1>
+            <h1>いいとも's <span class="gradient-text">Tools</span></h1>
             <p class="subtitle">あなただけのクリエイティブ・アプリポータル</p>
+            <div class="header-actions">
+                <button id="manual-btn" class="manual-btn">
+                    <i class="fa-solid fa-book-open"></i> いいとも つかいかたガイド 🚀
+                </button>
+            </div>
         </header>
 
         <div class="search-container">
@@ -67,6 +72,20 @@
         </footer>
     </div>
 
+    <!-- Manual Modal -->
+    <div id="manual-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-book-open"></i> 使いかたガイド</h2>
+                <button id="close-manual-btn" class="close-btn">&times;</button>
+            </div>
+            <div id="manual-body" class="modal-body manual-content">
+                <div class="loading">読み込んでいます...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="script.js"></script>
 </body>
 

@@ -45,21 +45,37 @@
                     </div>
                 </div>
 
-                <div class="action-section">
-                    <button id="translate-btn" class="primary-btn">
-                        <span>Translate</span>
-                        <i class="fas fa-arrow-down mobile-only"></i>
-                        <i class="fas fa-language desktop-only"></i>
-                    </button>
+                <div class="action-section" style="margin-bottom: 1rem; justify-content: center; display: flex;">
+                    <div id="status-indicator" class="status-indicator">
+                        <i class="fas fa-magic"></i> Auto-translating...
+                    </div>
                 </div>
 
-                <div class="output-section">
-                    <div class="textarea-wrapper result-wrapper">
-                        <div id="target-text-display" class="target-display empty">翻訳結果がここに表示されます</div>
-                        <div class="textarea-footer">
-                            <button id="copy-result-btn" class="icon-btn" title="Copy Result">
-                                <i class="far fa-copy"></i>
-                            </button>
+                <div class="output-grid">
+                    <div class="output-column">
+                        <label class="output-label">ENGLISH</label>
+                        <div class="textarea-wrapper result-wrapper">
+                            <textarea id="english-result" placeholder="English result..." spellcheck="false" class="empty" readonly></textarea>
+                            <div class="textarea-footer">
+                                <button id="copy-en-btn" class="icon-btn" title="Copy English">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="output-column">
+                        <label class="output-label">JAPANESE (Edit to refine)</label>
+                        <div class="textarea-wrapper result-wrapper">
+                            <textarea id="japanese-result" placeholder="日本語結果..." spellcheck="false" class="empty"></textarea>
+                            <div class="textarea-footer">
+                                <button id="update-original-btn" class="secondary-action-btn" title="Refine based on this Japanese">
+                                    <i class="fas fa-sync-alt"></i> 更新
+                                </button>
+                                <button id="copy-ja-btn" class="icon-btn" title="Copy Japanese">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -68,7 +84,7 @@
 
         <footer>
             <div class="footer-content">
-                <p>&copy; 2026 iitomo's Tools | Premium Experience</p>
+                <p>&copy; 2026 いいとも's Tools | Premium Experience</p>
                 <div class="version">v1.1.0</div>
             </div>
         </footer>
