@@ -24,7 +24,13 @@
 
     <div class="container">
         <header>
-            <h1>QR Tool</h1>
+            <div class="header-top">
+                <h1>QR Tool</h1>
+                <button id="settings-btn" class="icon-btn" title="Settings">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+
             <nav class="tabs">
                 <button class="tab-btn active" data-tab="generator">
                     <i class="fa-solid fa-qrcode"></i> Generate
@@ -46,12 +52,18 @@
                 <div class="qr-container">
                     <canvas id="qr"></canvas>
                 </div>
-                <div class="option-group">
+                <div class="option-group" style="flex-direction: column; gap: 10px;">
                     <label class="checkbox-container">
                         <input type="checkbox" id="external-browser-option">
                         <span class="checkmark"></span>
                         外部ブラウザで開く
                     </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="enable-short-url-option">
+                        <span class="checkmark"></span>
+                        短縮URLを作成する
+                    </label>
+                    <p class="option-hint"><i class="fa-solid fa-circle-info"></i> Instagram等では短縮URLを使わない方が安全です</p>
                 </div>
                 <div class="input-group">
                     <input type="text" id="text-input" placeholder="Type something or use current URL..."
@@ -117,7 +129,28 @@
             </div>
         </footer>
     </div>
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button id="close-modal-btn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <label for="bitly-api-key">Bitly Generic Access Token</label>
+                    <input type="password" id="bitly-api-key" placeholder="Enter your Bitly token...">
+                    <p class="setting-hint">
+                        トークンを設定すると高品質な Bitly リンクを作成します。空の場合は v.gd を使用します。
+                    </p>
+                </div>
+                <button id="save-settings-btn" class="primary-btn">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
     <script src="lib/qrious.min.js"></script>
+
     <script src="lib/jsQR.min.js"></script>
     <script src="popup.js"></script>
 </body>

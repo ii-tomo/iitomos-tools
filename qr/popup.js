@@ -9,6 +9,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const externalBrowserOption = document.getElementById('external-browser-option');
     const lineBanner = document.getElementById('line-browser-banner');
     const openExternalBtn = document.getElementById('open-external-btn');
+    const enableShortUrlOption = document.getElementById('enable-short-url-option');
+
+    // --- Modal Logic ---
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsModal = document.getElementById('settings-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const saveSettingsBtn = document.getElementById('save-settings-btn');
+    const bitlyKeyInput = document.getElementById('bitly-api-key');
+
+    // Load saved settings
+    bitlyKeyInput.value = localStorage.getItem('bitly_api_token') || '';
+
+    settingsBtn.addEventListener('click', () => {
+        settingsModal.style.display = 'block';
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        settingsModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === settingsModal) {
+            settingsModal.style.display = 'none';
+        }
+    });
+
+    saveSettingsBtn.addEventListener('click', () => {
+        localStorage.setItem('bitly_api_token', bitlyKeyInput.value.trim());
+        settingsModal.style.display = 'none';
+        generateQR(textInput.value); // Re-generate with new settings
+    });
+
+
 
     // --- Tab Switching ---
     const tabBtns = document.querySelectorAll('.tab-btn');
@@ -232,11 +265,12 @@ document.addEventListener('DOMContentLoaded', () => {
         generateQR(textInput.value);
     });
 
-    externalBrowserOption.addEventListener('change', () => {
+    enableShortUrlOption.addEventListener('change', () => {
         generateQR(textInput.value);
     });
 
     let shortUrlTimeout;
+
 
     function isValidUrl(string) {
         try {
@@ -248,9 +282,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function generateShortUrl(url, targetContainerId, targetInputId) {
+        // [Note] Instagram or Official LINE accounts might flag short URLs (is.gd/v.gd) as spam or phishing.
+        // It's generally safer to use the original long URL for QR codes shared on SNS.
+        if (!enableShortUrlOption.checked) {
+            document.getElementById(targetContainerId).style.display = 'none';
+            return;
+        }
+
+        const bitlyToken = localStorage.getItem('bitly_api_token');
+
         try {
-            const response = await fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(url)}`);
+            if (bitlyToken) {
+                // [Bitly Support] Using user's personal API token for high reliability
+                const response = await fetch('https://api-ssl.bitly.com/v4/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${bitlyToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ long_url: url })
+                });
+                const data = await response.json();
+                
+                if (data.link) {
+                    const container = document.getElementById(targetContainerId);
+                    const input = document.getElementById(targetInputId);
+                    input.value = data.link;
+                    container.style.display = 'flex';
+                    statusText.textContent = statusText.textContent.replace(' | Generating short URL...', ' | Bitly URL generated');
+                    return;
+                } else if (data.message && data.message === 'FORBIDDEN') {
+                    throw new Error('Bitly token is invalid or expired.');
+                }
+            }
+
+            // Fallback to v.gd
+            const response = await fetch(`https://v.gd/create.php?format=json&url=${encodeURIComponent(url)}`);
             const data = await response.json();
+
             if (data.shorturl) {
                 const container = document.getElementById(targetContainerId);
                 const input = document.getElementById(targetInputId);
@@ -263,9 +332,10 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error shortening URL:', error);
             document.getElementById(targetContainerId).style.display = 'none';
-            statusText.textContent = statusText.textContent.replace(' | Generating short URL...', ' | Short URL failed');
+            statusText.textContent = statusText.textContent.replace(' | Generating short URL...', ` | ${error.message || 'Short URL failed'}`);
         }
     }
+
 
     function generateQR(text) {
         if (!text) {
@@ -289,13 +359,14 @@ document.addEventListener('DOMContentLoaded', () => {
         statusText.textContent = `Length: ${finalValue.length} characters`;
 
         clearTimeout(shortUrlTimeout);
-        if (isValidUrl(text)) {
+        if (isValidUrl(text) && enableShortUrlOption.checked) {
             statusText.textContent += ' | Generating short URL...';
             shortUrlTimeout = setTimeout(() => generateShortUrl(finalValue, 'short-url-container', 'short-url-input'), 500);
         } else {
             document.getElementById('short-url-container').style.display = 'none';
         }
     }
+
 
     copyBtn.addEventListener('click', async () => {
         try {
