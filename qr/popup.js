@@ -5,6 +5,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyBtn = document.getElementById('copy-btn');
     const downloadBtn = document.getElementById('download-btn');
 
+
+    const externalBrowserOption = document.getElementById('external-browser-option');
+    const lineBanner = document.getElementById('line-browser-banner');
+    const openExternalBtn = document.getElementById('open-external-btn');
+
+    // Detect LINE Browser
+    const isLineBrowser = /Line/i.test(navigator.userAgent);
+    if (isLineBrowser) {
+        lineBanner.style.display = 'block';
+    }
+
+    openExternalBtn.addEventListener('click', () => {
+        const url = new URL(window.location.href);
+        url.searchParams.set('openExternalBrowser', '1');
+        window.location.href = url.toString();
+    });
+
     let qr = new QRious({
         element: qrCanvas,
         size: 200,
@@ -17,6 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
     generateQR('');
 
     textInput.addEventListener('input', () => {
+        generateQR(textInput.value);
+    });
+
+    externalBrowserOption.addEventListener('change', () => {
         generateQR(textInput.value);
     });
 
@@ -57,13 +78,25 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('short-url-container').style.display = 'none';
             return;
         }
-        qr.value = text;
-        statusText.textContent = `Length: ${text.length} characters`;
+
+        let finalValue = text;
+        if (externalBrowserOption.checked && isValidUrl(text)) {
+            try {
+                const url = new URL(text);
+                url.searchParams.set('openExternalBrowser', '1');
+                finalValue = url.toString();
+            } catch (e) {
+                console.error('Failed to parse URL for external browser option', e);
+            }
+        }
+
+        qr.value = finalValue;
+        statusText.textContent = `Length: ${finalValue.length} characters`;
 
         clearTimeout(shortUrlTimeout);
         if (isValidUrl(text)) {
             statusText.textContent += ' | Generating short URL...';
-            shortUrlTimeout = setTimeout(() => generateShortUrl(text), 500);
+            shortUrlTimeout = setTimeout(() => generateShortUrl(finalValue), 500);
         } else {
             document.getElementById('short-url-container').style.display = 'none';
         }

@@ -1,4 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Detect LINE Browser
+    const isLineBrowser = /Line/i.test(navigator.userAgent);
+    const lineBanner = document.getElementById('line-browser-banner');
+    const openExternalBtn = document.getElementById('open-external-btn');
+
+    if (isLineBrowser && lineBanner) {
+        lineBanner.style.display = 'block';
+    }
+
+    if (openExternalBtn) {
+        openExternalBtn.addEventListener('click', () => {
+            const url = new URL(window.location.href);
+            url.searchParams.set('openExternalBrowser', '1');
+            window.location.href = url.toString();
+        });
+    }
+
     const searchInput = document.getElementById('searchInput');
     const appCards = document.querySelectorAll('.app-card');
 

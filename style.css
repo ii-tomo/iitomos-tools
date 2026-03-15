@@ -76,6 +76,40 @@ body {
     }
 }
 
+/* LINE Banner */
+.line-banner {
+    background: rgba(6, 199, 85, 0.1);
+    border: 1px solid rgba(6, 199, 85, 0.2);
+    border-radius: 16px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.line-banner p {
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+    color: #06c755;
+    font-weight: 600;
+}
+
+#open-external-btn {
+    background: #06c755;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.3s;
+}
+
+#open-external-btn:hover {
+    background: #05b54d;
+    transform: translateY(-2px);
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;

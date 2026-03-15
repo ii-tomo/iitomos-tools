@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translator | iitomo's Tools</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-decor blob-1"></div>
+    <div class="background-decor blob-2"></div>
+
+    <a href="../index.html" class="back-link">← Tools</a>
+
+    <div class="container">
+        <header>
+            <h1>Translator</h1>
+            <div id="line-browser-banner" class="line-banner" style="display: none;">
+                <p><i class="fab fa-line"></i> LINE内蔵ブラウザでは一部機能が制限されます。</p>
+                <button id="open-external-btn">外部ブラウザで開く</button>
+            </div>
+        </header>
+
+        <main>
+            <div class="translator-card">
+                <div class="lang-controls">
+                    <div class="lang-box active" data-lang="ja">Japanese</div>
+                    <button id="swap-langs" class="swap-btn" title="Swap Languages">
+                        <i class="fas fa-exchange-alt"></i>
+                    </button>
+                    <div class="lang-box" data-lang="en">English</div>
+                </div>
+
+                <div class="input-section">
+                    <div class="textarea-wrapper">
+                        <textarea id="source-text" placeholder="翻訳したいテキストを入力..." spellcheck="false"></textarea>
+                        <div class="textarea-footer">
+                            <span id="char-count">0 / 5000</span>
+                            <button id="clear-btn" class="icon-btn" title="Clear">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-section">
+                    <button id="translate-btn" class="primary-btn">
+                        <span>Translate</span>
+                        <i class="fas fa-arrow-down mobile-only"></i>
+                        <i class="fas fa-language desktop-only"></i>
+                    </button>
+                </div>
+
+                <div class="output-section">
+                    <div class="textarea-wrapper result-wrapper">
+                        <div id="target-text-display" class="target-display empty">翻訳結果がここに表示されます</div>
+                        <div class="textarea-footer">
+                            <button id="copy-result-btn" class="icon-btn" title="Copy Result">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 iitomo's Tools | Premium Experience</p>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast">コピーしました！</div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -27,18 +27,33 @@
             <h1>QR Generator</h1>
         </header>
         <main>
+            <div id="line-browser-banner" class="line-banner" style="display: none;">
+                <p><i class="fa-brands fa-line"></i> LINE内蔵ブラウザでは一部機能が制限されます。</p>
+                <button id="open-external-btn">外部ブラウザで開く</button>
+            </div>
             <div class="qr-container">
                 <canvas id="qr"></canvas>
+            </div>
+            <div class="option-group">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="external-browser-option">
+                    <span class="checkmark"></span>
+                    外部ブラウザで開く
+                </label>
             </div>
             <div class="input-group">
                 <input type="text" id="text-input" placeholder="Type something or use current URL..."
                     spellcheck="false">
-                <button id="copy-btn" title="Copy QR Code Image">Copy Image</button>
-                <button id="download-btn" title="Download QR Code Image">Download Image</button>
+                <div class="action-buttons">
+                    <button id="copy-btn" title="Copy QR Code Image">Copy Image</button>
+                    <button id="download-btn" title="Download QR Code Image">Download Image</button>
+                </div>
             </div>
             <div class="short-url-container" id="short-url-container" style="display: none;">
-                <input type="text" id="short-url-input" readonly title="Short URL">
-                <button id="copy-url-btn" title="Copy Short URL">Copy URL</button>
+                <div class="short-url-container-inner">
+                    <input type="text" id="short-url-input" readonly title="Short URL">
+                    <button id="copy-url-btn" title="Copy Short URL">Copy URL</button>
+                </div>
             </div>
         </main>
         <footer>
