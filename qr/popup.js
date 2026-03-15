@@ -282,8 +282,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function generateShortUrl(url, targetContainerId, targetInputId) {
-        // [Note] Instagram or Official LINE accounts might flag short URLs (is.gd/v.gd) as spam or phishing.
-        // It's generally safer to use the original long URL for QR codes shared on SNS.
         if (!enableShortUrlOption.checked) {
             document.getElementById(targetContainerId).style.display = 'none';
             return;
@@ -292,8 +290,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const bitlyToken = localStorage.getItem('bitly_api_token');
 
         try {
+            // 1. Try the Server-side API (Cloudflare Function)
+            // This is the secure way for the deployed version (uses BITLY_API_TOKEN secret)
+            try {
+                const response = await fetch('/api/shorten', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ long_url: url })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.link) {
+                        const container = document.getElementById(targetContainerId);
+                        const input = document.getElementById(targetInputId);
+                        input.value = data.link;
+                        container.style.display = 'flex';
+                        statusText.textContent = statusText.textContent.replace(' | Generating short URL...', ' | Bitly URL generated (Server)');
+                        return;
+                    }
+                }
+            } catch (serverError) {
+                console.log('Server-side shortening skipped or failed, trying client-side fallback.');
+            }
+
+            // 2. Client-side Fallback (User's manual token in localStorage)
             if (bitlyToken) {
-                // [Bitly Support] Using user's personal API token for high reliability
                 const response = await fetch('https://api-ssl.bitly.com/v4/shorten', {
                     method: 'POST',
                     headers: {
@@ -311,12 +333,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     container.style.display = 'flex';
                     statusText.textContent = statusText.textContent.replace(' | Generating short URL...', ' | Bitly URL generated');
                     return;
-                } else if (data.message && data.message === 'FORBIDDEN') {
-                    throw new Error('Bitly token is invalid or expired.');
                 }
             }
 
-            // Fallback to v.gd
+            // 3. Last Resort: v.gd (Public API)
             const response = await fetch(`https://v.gd/create.php?format=json&url=${encodeURIComponent(url)}`);
             const data = await response.json();
 
