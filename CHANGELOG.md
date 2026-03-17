@@ -2,6 +2,11 @@
 
 All notable changes to the `iitomos-tools` project will be documented in this file.
 
+## [1.3.0] - 2026-03-18 (QR Tool UI Update)
+### Improved
+- **Scanner UI**: Added scan line and corner guides for better camera alignment.
+- **Auto-Redirect**: Automatically opens decoded URLs in a new tab.
+
 ## [1.2.0] - 2026-03-15 (QR Tool Update)
 ### Added
 - **Camera Reader**: Real-time QR code scanning using the camera.

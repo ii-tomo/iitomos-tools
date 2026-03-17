@@ -83,10 +83,13 @@
 
             <!-- Reader Tab Content -->
             <div id="reader-tab" class="tab-content">
-                <div class="reader-actions">
+                <div class="reader-actions" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
                     <button id="start-camera-btn" class="secondary-btn">
                         <i class="fa-solid fa-camera"></i> Scan with Camera
                     </button>
+                    <p class="option-hint" style="color: var(--primary); font-size: 0.9rem; margin: 0; font-weight: 500;">
+                        <i class="fa-solid fa-bolt"></i> QRコードの内容がURLの場合、自動的に別タブで開きます！
+                    </p>
                 </div>
 
                 <div id="camera-container" class="camera-container" style="display: none;">
@@ -111,6 +114,7 @@
                         <textarea id="reader-result" readonly></textarea>
                         <button id="copy-reader-result-btn">Copy Link</button>
                     </div>
+                    <p class="option-hint" style="margin-top: 10px; color: #8b949e; font-size: 0.85rem;"><i class="fa-solid fa-circle-info"></i> LINEの友だち追加など、スマホアプリ専用のQRコードはPCブラウザでは開けないこと（何も起きないこと）があります。</p>
                 </div>
                 <!-- Reader Short URL Section -->
                 <div class="short-url-container" id="reader-short-url-container" style="display: none;">
@@ -125,7 +129,7 @@
         <footer>
             <div class="status-container">
                 <div class="status" id="status-text">Ready</div>
-                <div class="version">v1.2.0</div>
+                <div class="version">v1.3.0</div>
             </div>
         </footer>
     </div>

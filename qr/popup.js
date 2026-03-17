@@ -110,21 +110,57 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     }
 
+    // --- Paste Image Logic ---
+    window.addEventListener('paste', (e) => {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (let item of items) {
+            if (item.type.indexOf('image') === 0) {
+                const file = item.getAsFile();
+                if (file) {
+                    // 自動的にReadタブに切り替える
+                    const readerTabBtn = document.querySelector('.tab-btn[data-tab="reader"]');
+                    if(readerTabBtn) readerTabBtn.click();
+                    handleFile(file);
+                }
+                break;
+            }
+        }
+    });
+
     function decodeQR(img) {
         const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        context.drawImage(img, 0, 0, img.width, img.height);
+        const context = canvas.getContext('2d', { willReadFrequently: true });
+        
+        // Scale down large images to prevent browser crash and speed up jsQR
+        const MAX_DIM = 1000;
+        let width = img.width;
+        let height = img.height;
+        if (width > MAX_DIM || height > MAX_DIM) {
+            const ratio = Math.min(MAX_DIM / width, MAX_DIM / height);
+            width = width * ratio;
+            height = height * ratio;
+        }
 
-        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        canvas.width = width;
+        canvas.height = height;
+        context.drawImage(img, 0, 0, width, height);
 
-        if (code) {
-            handleDecodedData(code.data);
-        } else {
-            alert('Could not find a QR code in this image.');
-            statusText.textContent = 'QR decoding failed';
+        try {
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: 'attemptBoth'
+            });
+
+            if (code) {
+                handleDecodedData(code.data);
+            } else {
+                alert('QRコードが見つかりません。別の画像をお試しください。');
+                statusText.textContent = 'QR decoding failed';
+            }
+        } catch (e) {
+            console.error(e);
+            alert('画像の解析中にエラーが発生しました。');
+            statusText.textContent = 'QR decoding error';
         }
     }
 
@@ -193,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
             const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                inversionAttempts: 'dontInvert',
+                inversionAttempts: 'attemptBoth',
             });
 
             if (code) {
@@ -212,7 +248,11 @@ document.addEventListener('DOMContentLoaded', () => {
         statusText.textContent = 'QR Code decoded successfully!';
 
         if (isValidUrl(data)) {
-            statusText.textContent += ' | Generating short URL...';
+            // Automatically redirect to the URL in a new tab
+            statusText.textContent = 'Redirecting to link...';
+            window.open(data, '_blank');
+            
+            // Still generate short URL in background just in case
             generateShortUrl(data, 'reader-short-url-container', 'reader-short-url-input');
         } else {
             document.getElementById('reader-short-url-container').style.display = 'none';
