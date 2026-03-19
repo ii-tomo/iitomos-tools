@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const readerResult = document.getElementById('reader-result');
     const readerResultContainer = document.getElementById('reader-result-container');
     const copyReaderResultBtn = document.getElementById('copy-reader-result-btn');
+    const openLinkBtn = document.getElementById('open-link-btn');
 
     dropZone.addEventListener('click', () => fileInput.click());
 
@@ -248,13 +249,21 @@ document.addEventListener('DOMContentLoaded', () => {
         statusText.textContent = 'QR Code decoded successfully!';
 
         if (isValidUrl(data)) {
+            openLinkBtn.style.display = 'inline-block';
+            openLinkBtn.onclick = () => window.open(data, '_blank');
+
             // Automatically redirect to the URL in a new tab
-            statusText.textContent = 'Redirecting to link...';
-            window.open(data, '_blank');
+            const win = window.open(data, '_blank');
+            if (win) {
+                statusText.textContent = 'Redirecting to link...';
+            } else {
+                statusText.textContent = 'QR Code decoded. Population blocked - please click "Open Link".';
+            }
             
             // Still generate short URL in background just in case
             generateShortUrl(data, 'reader-short-url-container', 'reader-short-url-input');
         } else {
+            openLinkBtn.style.display = 'none';
             document.getElementById('reader-short-url-container').style.display = 'none';
         }
 

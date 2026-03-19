@@ -112,7 +112,12 @@
                     <h3>Decoded Content:</h3>
                     <div class="result-box">
                         <textarea id="reader-result" readonly></textarea>
-                        <button id="copy-reader-result-btn">Copy Link</button>
+                        <div class="result-actions" style="display: flex; gap: 10px;">
+                            <button id="copy-reader-result-btn" class="secondary-btn">Copy Link</button>
+                            <button id="open-link-btn" class="primary-btn" style="display: none;">
+                                <i class="fa-solid fa-up-right-from-square"></i> Open Link
+                            </button>
+                        </div>
                     </div>
                     <p class="option-hint" style="margin-top: 10px; color: #8b949e; font-size: 0.85rem;"><i class="fa-solid fa-circle-info"></i> LINEの友だち追加など、スマホアプリ専用のQRコードはPCブラウザでは開けないこと（何も起きないこと）があります。</p>
                 </div>
@@ -129,7 +134,7 @@
         <footer>
             <div class="status-container">
                 <div class="status" id="status-text">Ready</div>
-                <div class="version">v1.3.0</div>
+                <div class="version">v1.4.0</div>
             </div>
         </footer>
     </div>

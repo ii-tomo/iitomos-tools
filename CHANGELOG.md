@@ -2,6 +2,17 @@
 
 All notable changes to the `iitomos-tools` project will be documented in this file.
 
+## [1.4.0] - 2026-03-19 (QR Tool Update)
+### Improved
+- **Auto-Redirect**: Enhanced auto-redirect logic for image uploads and pastes.
+- **UI Fallback**: Added "Open Link" button when auto-redirect is blocked by browser.
+- **Scanner UI**: Optimized scanner size for better mobile and desktop experience.
+
+## [1.2.0] - 2026-03-19 (Translator Update)
+### Improved
+- **Premium UI**: Synchronized design with QR tool for a consistent "Premium" experience.
+- **Better Sync**: Master-Sync operational strategy applied.
+
 ## [1.3.0] - 2026-03-18 (QR Tool UI Update)
 ### Improved
 - **Scanner UI**: Added scan line and corner guides for better camera alignment.
