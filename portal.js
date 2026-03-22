@@ -7,14 +7,14 @@ const toolsData = [
     name: 'QRジェネレーター',
     icon: '🔍',
     desc: '美しいQRコードと短縮URLを瞬時に作成・シェア。',
-    isUnlocked: true
+    isUnlocked: false
   },
   {
     id: 'translate',
     name: '翻訳 & プロンプト',
     icon: '🌎',
     desc: '日英連携でAI向けの完璧なプロンプトを構築。',
-    isUnlocked: true
+    isUnlocked: false
   },
   {
     id: 'image-converter',
@@ -165,11 +165,43 @@ modalSubmit.addEventListener('click', () => {
     return;
   }
   
-  // デモ用のパスワード判定 (現在は準備中として弾く)
-  if (key === 'IITOMO-ADDON') {
-    modalError.textContent = '現在、追加ツールは準備中です。アップデートをお待ちください。';
+  let unlockedCount = 0;
+  let targetTools = [];
+
+  // ライセンスキーの判定ロジック
+  if (key === 'IITOMO-QR-2026') {
+    targetTools = ['qr'];
+  } else if (key === 'IITOMO-TRANS-2026') {
+    targetTools = ['translate'];
+  } else if (key === 'IITOMO-PRO-2026' || key === 'IITOMO-ADDON' /* デモ用 */) {
+    targetTools = ['qr', 'translate', 'image-converter'];
+  }
+
+  if (targetTools.length > 0) {
+    // ツール状態の更新
+    targetTools.forEach(id => {
+      const tool = toolsData.find(t => t.id === id);
+      if (tool && !savedUnlocks.includes(id)) {
+        tool.isUnlocked = true;
+        savedUnlocks.push(id);
+        unlockedCount++;
+      }
+    });
+
+    if (unlockedCount > 0) {
+      // localStorageへの保存
+      localStorage.setItem('iitomo_unlocked_tools', JSON.stringify(savedUnlocks));
+      renderToolCards();
+      modalError.style.color = '#00f5d4';
+      modalError.textContent = 'ライセンス認証に成功しました！';
+      setTimeout(closeModal, 1500);
+    } else {
+      modalError.style.color = '#ff5577';
+      modalError.textContent = 'そのキーは既に有効化されています。';
+    }
   } else {
-    modalError.textContent = '無効なライセンスキーです。';
+    modalError.style.color = '#ff5577';
+    modalError.textContent = '無効なライセンスキーです。正しく入力してください。';
   }
 });
 
