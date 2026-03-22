@@ -1,0 +1,11 @@
+# AI reports
+walkthrough.md
+implementation_plan.md
+task.md
+distribution_guide.md
+
+# Logs and temp files
+*.log
+/tmp/
+.DS_Store
+Thumbs.db

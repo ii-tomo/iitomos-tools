@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Portal | iitomo's Tools</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0' stop-color='%2300f5d4'/><stop offset='1' stop-color='%23bf5af2'/></linearGradient></defs><rect width='100' height='100' rx='25' fill='%230d1117'/><rect x='42' y='20' width='16' height='16' rx='8' fill='url(%23g)'/><rect x='42' y='46' width='16' height='36' rx='8' fill='url(%23g)'/><circle cx='70' cy='30' r='6' fill='%2300f5d4'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="portal.css">
+</head>
+<body>
+
+<div class="portal-container">
+  
+  <!-- Sidebar (PC) -->
+  <aside class="sidebar">
+    <div class="brand">iitomo's Tools</div>
+    <nav class="side-nav">
+      <div class="nav-item active" data-view="dashboard">
+        <span class="icon">🏠</span>
+        <span class="label">ダッシュボード</span>
+      </div>
+      <div class="nav-item" data-view="qr">
+        <span class="icon">🔍</span>
+        <span class="label">QRジェネレーター</span>
+      </div>
+      <div class="nav-item" data-view="translate">
+        <span class="icon">🌎</span>
+        <span class="label">翻訳 & プロンプト</span>
+      </div>
+      <div class="nav-item btn-add-tool" id="btn-add-tool">
+        <span class="icon">🔐</span>
+        <span class="label">ツール追加 +</span>
+      </div>
+      <div class="nav-item bottom-push" data-view="settings" style="align-items: center;">
+        <span class="icon">⚙️</span>
+        <div style="display: flex; flex-direction: column; line-height: 1.2;">
+          <span class="label" style="margin-bottom: 2px;">設定</span>
+          <span style="font-size: 0.6rem; color: var(--text-dim); font-weight: normal;">はじめにお読みください</span>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <header class="top-header">
+      <div class="url-bar">
+        <div class="dots">
+          <span class="dot red"></span>
+          <span class="dot amber"></span>
+          <span class="dot green"></span>
+        </div>
+        <div class="url">iitomo-tools.app / portal</div>
+      </div>
+    </header>
+    
+    <div class="content-body">
+      <!-- Dashboard View -->
+      <div class="view-section active" id="view-dashboard">
+        <h1 class="page-title">MY TOOLS <span class="badge">ACTIVE LICENSE</span></h1>
+        <p class="page-desc">現在利用可能なクリエイター環境ツールの一覧です。</p>
+        
+        <div class="tool-cards" id="tool-cards-container">
+          <!-- Cards will be dynamically injected by JS -->
+        </div>
+      </div>
+
+      <!-- Other Views (Tools + Manuals) -->
+      <div class="view-section" id="view-qr">
+        <div class="view-header-flex">
+          <div>
+            <h1 class="page-title">🔍 QRジェネレーター</h1>
+            <p class="page-desc">QRコードの素早い生成と読み取りを行います。</p>
+          </div>
+          <button class="btn-manual-toggle" onclick="document.getElementById('qr-manual').classList.toggle('active')">
+            <span class="icon">📖</span> 使い方
+          </button>
+        </div>
+        
+        <div class="manual-container collapsible" id="qr-manual">
+          <h3>🏁 QRコードを作る (Generate)</h3>
+          <p>URLや文字を入力するだけで、一瞬でQRコードが作成できます。</p>
+          <ol>
+            <li><strong>「Generate」タブ</strong>を選びます。</li>
+            <li>下の白い枠に、QRコードにしたい <strong>URLや文字</strong>を入力します。
+              <ul><li>🌟 <strong>短縮URLを作りたいとき：</strong> 「短縮URLを作成する」にチェックを入れると、長いURLを短くできます。</li></ul>
+            </li>
+            <li>画面にQRコードが表示されます。</li>
+            <li><strong>「Download Image」</strong>を押すと、画像として保存（ダウンロード）できます。</li>
+          </ol>
+          
+          <h3>📷 QRコードを読み取る (Read)</h3>
+          <p>カメラや画像ファイルから、QRコードの内容を読み取ります。</p>
+          <ol>
+            <li><strong>「Read」タブ</strong>を選びます。</li>
+            <li>カメラで読み取る場合は <strong>「Scan with Camera」</strong>をクリックします。</li>
+            <li>画像ファイルを持っている場合は、点線の枠の中に画像をドラッグ＆ドロップするか、<strong>枠の中を直接タップ</strong>して写真を選んでください。</li>
+            <li>読み取りに成功すると、リンクなどの内容が下に表示されます！</li>
+          </ol>
+        </div>
+
+        <div class="app-iframe-container">
+          <iframe src="qr/index.html" class="tool-iframe" allow="camera; clipboard-write; clipboard-read" title="QR Tool" scrolling="no"></iframe>
+        </div>
+      </div>
+      
+      <div class="view-section" id="view-translate">
+        <div class="view-header-flex">
+          <div>
+            <h1 class="page-title">🌎 翻訳 & プロンプト</h1>
+            <p class="page-desc">AIへの指示作りを完璧にサポートします。</p>
+          </div>
+          <button class="btn-manual-toggle" onclick="document.getElementById('translate-manual').classList.toggle('active')">
+            <span class="icon">📖</span> 使い方
+          </button>
+        </div>
+
+        <div class="manual-container collapsible" id="translate-manual">
+          <h3>🌎 自動翻訳でプロンプトを「磨き上げる」</h3>
+          <p>AIへの最適な指示（プロンプト）作りを協力にサポートします。自動翻訳と便利なセット表示がポイントです！</p>
+          <ol>
+            <li><strong>自動で翻訳：</strong> 上の枠に文章を入れると、手を止めた瞬間に自動で翻訳が始まります。</li>
+            <li><strong>セットで表示：</strong> 下の結果エリアには「英語」と「元の日本語」がセットで表示されます。これをそのまま国内外のAI向けプロンプトとしてコピーできます。</li>
+            <li><strong>さらに磨き上げる：</strong> 下の文章を手直ししてから<strong>「元の文章を更新」</strong>ボタンを押してください。修正したニュアンスを汲み取って、元の文章がより良い表現にアップデートされます！</li>
+            <li><strong>一括コピー：</strong> お気に入りの文章ができたら、右下のコピーボタンで一気にコピーしましょう。</li>
+          </ol>
+        </div>
+
+        <div class="app-iframe-container">
+          <iframe src="translator/index.html" class="tool-iframe" allow="clipboard-write; clipboard-read" title="Translator Tool" scrolling="no"></iframe>
+        </div>
+      </div>
+      <div class="view-section" id="view-settings">
+        <h1 class="page-title">⚙️ 設定・ライセンス管理</h1>
+        <p class="page-desc">ポータルの使い方や、現在有効なライセンス情報を確認できます。</p>
+
+        <div class="settings-grid">
+          <!-- Guide Section -->
+          <div class="settings-card">
+            <div class="card-icon">📖</div>
+            <div class="card-content">
+              <h3>ポータルの歩き方（はじめての方へ）</h3>
+              <p>このポータルは、クリエイターの作業を加速する環境・ツールの集合体です。サイドバーから使いたいツールを選んで素早く作業に入れます。</p>
+              <ul class="guide-list">
+                <li><strong>ツールの使い方：</strong> 各ツール画面の右上にある「📖 使い方」ボタンは、<strong style="color:var(--neon-amber); background:rgba(255,204,0,0.1);">1回クリックするとガイドが開き、もう1回クリックすると閉じます。</strong>作業の邪魔にならないよう配慮しています。</li>
+                <li><strong>ツールの追加：</strong> サイドメニューの「ツール追加 +」から、購入時にお渡ししたライセンスキーを入力することで、新しいツールがアンロックされます。</li>
+                <li><strong>データ保存について：</strong> アンロック状態や各ツールの設定は、現在お使いのブラウザ（端末）に安全に直接保存されます。</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Bitly Card -->
+          <div class="settings-card">
+            <div class="card-icon"><i class="fa-solid fa-link-slash"></i></div>
+            <div class="card-content">
+              <h3>短縮URL (Bitly) の連携設定ガイド</h3>
+              <p>QRコードを「誰でも読みやすく」するための重要な機能です。ぜひ設定にチャレンジしてみてください！</p>
+              <ul class="guide-list">
+                <li><strong>設定のメリット:</strong> 長いURLを短縮することで、QRコードが簡素化され、古いスマホでも一瞬で読み取れるようになります。</li>
+                <li><strong>手順① 登録:</strong> <a href="https://bitly.com/" target="_blank" style="color: var(--neon-cyan); text-decoration: underline; font-weight: bold;">Bitly公式サイト</a> で無料アカウントを作成（Sign up for free）します。</li>
+                <li><strong>手順② 取得:</strong> ログイン後、`Settings` > `API` > `Generate Token` の順に進み、パスワードを再入力してトークンを発行・コピーします。</li>
+                <li><strong>手順③ 設定:</strong> QRツールの右上にある <i class="fa-solid fa-gear"></i> 設定アイコンを開き、コピーしたトークンを貼り付けて【設定を保存】すれば完了です！</li>
+              </ul>
+              <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 12px; border-left: 2px solid var(--neon-cyan); padding-left: 10px;">
+                ※この設定はあなたのブラウザのみに保存され、iitomos開発者には送信されません。
+              </p>
+            </div>
+          </div>
+
+          <!-- License Section -->
+          <div class="settings-card">
+            <div class="card-icon">🔑</div>
+            <div class="card-content">
+              <h3>ライセンス・所有ツール管理</h3>
+              <p>現在あなたのアカウント（このブラウザ）で有効化されているツールの一覧です。</p>
+              <div class="unlocked-tools-list" id="settings-unlocked-list">
+                <!-- JS will populate this dynamically -->
+              </div>
+              <button class="btn-primary" style="margin-top: 15px; font-size: 0.85rem;" onclick="document.getElementById('btn-add-tool').click()">+ 新しいライセンスキーを登録</button>
+            </div>
+          </div>
+
+          <!-- System Settings -->
+          <div class="settings-card" style="border-color: rgba(255, 60, 100, 0.2);">
+            <div class="card-icon" style="color: #ff5577; background: rgba(255, 60, 100, 0.1);">💻</div>
+            <div class="card-content">
+              <h3 style="color: #ff5577;">システム設定（上級者向け）</h3>
+              <p>ブラウザに保存されているポータルのデータ（アンロック情報など）をすべてリセットします。※再設定が必要です。</p>
+              <button class="btn-danger" style="margin-top: 10px; font-size: 0.85rem;" onclick="if(confirm('全データをリセットしますか？この操作は取り消せません。')) { localStorage.removeItem('iitomo_unlocked_tools'); location.reload(); }">全データをリセット</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" data-view="dashboard">
+      <span class="icon">🏠</span>
+      <span class="label">ホーム</span>
+    </div>
+    <div class="nav-item" data-view="qr">
+      <span class="icon">🔍</span>
+      <span class="label">QR</span>
+    </div>
+    <div class="nav-item" data-view="translate">
+      <span class="icon">🌎</span>
+      <span class="label">翻訳</span>
+    </div>
+    <div class="nav-item" data-view="settings">
+      <span class="icon">⚙️</span>
+      <span class="label">設定</span>
+    </div>
+  </nav>
+  
+  <!-- Add Tool Modal -->
+  <div class="modal-overlay" id="add-tool-modal">
+    <div class="modal">
+      <button class="modal-close" id="modal-close">×</button>
+      <div class="modal-header">
+        <div class="modal-title">ライセンスキー入力</div>
+      </div>
+      <div class="modal-body">
+        <p>購入時に発行されたライセンスキーを入力して、新しいツールをアンロックしてください。</p>
+        <div class="key-input-wrap">
+          <input type="text" class="key-input" id="license-key-input" placeholder="IITOMO-XXXX-XXXX" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="modal-error" id="modal-error"></div>
+        <button class="btn-primary modal-submit" id="modal-submit">UNLOCK →</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="portal.js"></script>
+</body>
+</html>

@@ -60,7 +60,7 @@ body {
 }
 
 .back-link {
-    position: fixed;
+    position: absolute;
     top: 20px;
     left: 20px;
     z-index: 1000;
@@ -653,4 +653,47 @@ button {
 .primary-btn {
     background: var(--primary-grad);
     color: white;
+    width: 100%;
+}
+
+.clear-text-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    width: auto;
+    text-decoration: underline;
+    transition: color 0.2s;
+    display: inline-block;
+    margin-top: 8px;
+}
+
+.clear-text-btn:hover {
+    color: var(--accent-pink);
+}
+
+/* Media Queries */
+.mobile-only { display: none; }
+@media (max-width: 600px) {
+    .mobile-only { display: block; }
+    .desktop-only { display: none; }
+    
+    .back-link {
+        top: 10px;
+        left: 10px;
+        font-size: 11px;
+        padding: 8px 12px;
+    }
+    
+    .container {
+        padding: 2rem 1.5rem;
+        margin-top: 60px;
+        margin-bottom: 20px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
 }

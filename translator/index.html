@@ -12,7 +12,7 @@
     <div class="background-decor blob-1"></div>
     <div class="background-decor blob-2"></div>
 
-    <a href="../index.html" class="back-link">← Tools</a>
+    <a href="#" onclick="if(window.parent !== window){ window.parent.postMessage('goHome', '*'); } else { window.location.href='../index.html'; } return false;" class="back-link"><i class="fa-solid fa-arrow-left"></i> ダッシュボードへ戻る</a>
 
     <div class="container">
         <header>
@@ -84,8 +84,8 @@
 
         <footer>
             <div class="footer-content">
-                <p>&copy; 2026 いいとも's Tools | Premium Experience</p>
-                <div class="version">v1.2.0</div>
+                <p>&copy; 2026 iitomo's Tools</p>
+                <div class="version">v2.0.0</div>
             </div>
         </footer>
     </div>
@@ -93,5 +93,29 @@
     <div id="toast" class="toast">コピーしました！</div>
 
     <script src="script.js"></script>
+    <script>
+        // ポータルとの連携（コンテナ高さを基準にして無限ループを完全防止）
+        let lastHeight = 0;
+        const sendHeight = () => {
+            const container = document.querySelector('.container');
+            if (container && window.parent !== window) {
+                const h = container.offsetHeight + 100; 
+                if (Math.abs(lastHeight - h) > 5) {
+                    lastHeight = h;
+                    window.parent.postMessage({ type: 'resize', height: h }, '*');
+                }
+            }
+        };
+        window.addEventListener('load', sendHeight);
+        
+        setTimeout(() => {
+            const target = document.querySelector('.container');
+            if(target) {
+                new ResizeObserver(sendHeight).observe(target);
+                const observer = new MutationObserver(sendHeight);
+                observer.observe(target, { childList: true, subtree: true, characterData: true });
+            }
+        }, 100);
+    </script>
 </body>
 </html>

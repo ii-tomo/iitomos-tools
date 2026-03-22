@@ -60,7 +60,7 @@ body {
 }
 
 .back-link {
-    position: fixed;
+    position: absolute;
     top: 20px;
     left: 20px;
     z-index: 1000;
@@ -419,8 +419,17 @@ footer p {
     .mobile-only { display: block; }
     .desktop-only { display: none; }
     
+    .back-link {
+        top: 10px;
+        left: 10px;
+        font-size: 11px;
+        padding: 8px 12px;
+    }
+    
     .container {
         padding: 2rem 1.5rem;
+        margin-top: 60px;
+        margin-bottom: 20px;
     }
     
     h1 {

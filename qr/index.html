@@ -18,8 +18,8 @@
 <body>
     <div class="background-decor blob-1"></div>
     <div class="background-decor blob-2"></div>
-    <a href="../index.html" class="back-link">
-        <i class="fa-solid fa-arrow-left"></i> Back
+    <a href="#" onclick="if(window.parent !== window){ window.parent.postMessage('goHome', '*'); } else { window.location.href='../index.html'; } return false;" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i> ダッシュボードへ戻る
     </a>
 
     <div class="container">
@@ -134,7 +134,7 @@
         <footer>
             <div class="status-container">
                 <div class="status" id="status-text">Ready</div>
-                <div class="version">v1.4.0</div>
+                <div class="version">v2.0.0</div>
             </div>
         </footer>
     </div>
@@ -147,21 +147,54 @@
             </div>
             <div class="modal-body">
                 <div class="setting-item">
-                    <label for="bitly-api-key">Bitly Generic Access Token</label>
-                    <input type="password" id="bitly-api-key" placeholder="Enter your Bitly token...">
-                    <p class="setting-hint">
-                        トークンを設定すると高品質な Bitly リンクを作成します。空の場合は v.gd を使用します。
+                    <label for="bitly-api-key" style="font-size: 1rem; color: var(--neon-cyan); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-key"></i> Bitly アクセストークン
+                    </label>
+                    <p class="setting-hint" style="margin-bottom: 1rem; line-height: 1.5;">
+                        Bitlyのトークンを設定すると、高品質な短縮URLを自動生成できます。
                     </p>
+                    <input type="password" id="bitly-api-key" placeholder="ここにトークンを貼り付け..." style="margin-bottom: 0;">
+                    <div style="text-align: right;">
+                        <button id="clear-api-key-btn" class="clear-text-btn">入力をクリアする</button>
+                    </div>
                 </div>
-                <button id="save-settings-btn" class="primary-btn">Save Settings</button>
+                <div style="margin-top: 2rem;">
+                    <button id="save-settings-btn" class="primary-btn" style="padding: 1.2rem; font-size: 1.1rem; letter-spacing: 0.05em;">
+                        設定を保存する
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="lib/qrious.min.js"></script>
-
     <script src="lib/jsQR.min.js"></script>
     <script src="popup.js"></script>
+    <script>
+        // ポータルとの連携（コンテナ高さを基準にして無限ループを完全防止）
+        let lastHeight = 0;
+        const sendHeight = () => {
+            const container = document.querySelector('.container');
+            if (container && window.parent !== window) {
+                // コンテナの高さ + 余白を加算（bodyの100vhやalign-itemsの影響を排除）
+                const h = container.offsetHeight + 100; 
+                if (Math.abs(lastHeight - h) > 5) {
+                    lastHeight = h;
+                    window.parent.postMessage({ type: 'resize', height: h }, '*');
+                }
+            }
+        };
+        window.addEventListener('load', sendHeight);
+        
+        // 100ms遅延させて安定したあとに監視開始
+        setTimeout(() => {
+            const target = document.querySelector('.container');
+            if(target) {
+                new ResizeObserver(sendHeight).observe(target);
+                const observer = new MutationObserver(sendHeight);
+                observer.observe(target, { childList: true, subtree: true, characterData: true });
+            }
+        }, 100);
+    </script>
 </body>
-
 </html>

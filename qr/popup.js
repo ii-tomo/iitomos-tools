@@ -41,6 +41,18 @@ document.addEventListener('DOMContentLoaded', () => {
         generateQR(textInput.value); // Re-generate with new settings
     });
 
+    const clearSettingsBtn = document.getElementById('clear-api-key-btn');
+    if (clearSettingsBtn) {
+        clearSettingsBtn.addEventListener('click', () => {
+            if (confirm('APIトークンを削除（クリア）しますか？')) {
+                bitlyKeyInput.value = '';
+                localStorage.removeItem('bitly_api_token');
+                alert('トークンをクリアしました。');
+                generateQR(textInput.value);
+            }
+        });
+    }
+
 
 
     // --- Tab Switching ---
