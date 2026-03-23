@@ -20,26 +20,14 @@ const toolsData = [
     id: 'image-converter',
     name: '画像コンバーター (Add-on)',
     icon: '🔄',
-    desc: '画像をドラッグ＆ドロップで瞬時にフォーマット変換（PNG ⇔ JPEG 等）。',
-    isUnlocked: false
-  },
-  {
-    id: 'coming',
-    name: 'Coming Soon',
-    icon: '✨',
-    desc: 'シークレットツールを開発中。アップデートをお待ちください。',
-    isUnlocked: false
+    desc: '画像をドラッグ＆ドロップで瞬時にフォーマット変換（近日公開）。',
+    isUnlocked: true
   }
 ];
 
 // 初期設定：localStorageからアンロック状態を復元 (あれば)
 let savedUnlocks = JSON.parse(localStorage.getItem('iitomo_unlocked_tools') || '[]');
 
-// デモ等で誤って解放された未実装ツールを強制ロック（真っ暗バグ防止）
-if (savedUnlocks.includes('image-converter')) {
-  savedUnlocks = savedUnlocks.filter(id => id !== 'image-converter');
-  localStorage.setItem('iitomo_unlocked_tools', JSON.stringify(savedUnlocks));
-}
 
 if (savedUnlocks.length > 0) {
   toolsData.forEach(tool => {

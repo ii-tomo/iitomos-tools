@@ -2,6 +2,16 @@
 
 All notable changes to the `iitomos-tools` project will be documented in this file.
 
+## [2.1.0] - 2026-03-23 (Portal & Delivery Update)
+### Added
+- **Delivery Skill**: Integrated `iitomos_delivery` skill for automated customer support.
+- **Delivery Template**: Added specifically tailored email draft for the first customer (徳田様).
+- **QR Resources**: Created `resources/qr` folder for organized management of LINE and Portal QR codes.
+### Improved
+- **Portal UI**: Significantly improved card visibility and contrast for dark mode.
+- **Portal Navigation**: Added "Coming Soon" placeholder for the Image Converter tool to prevent black screen errors.
+- **Provider Branding**: Updated portal and email templates with official provider details (RCS 飯島知美).
+
 ## [1.4.0] - 2026-03-19 (QR Tool Update)
 ### Improved
 - **Auto-Redirect**: Enhanced auto-redirect logic for image uploads and pastes.
