@@ -69,7 +69,7 @@ const renderToolCards = () => {
   const settingsList = document.getElementById('settings-unlocked-list');
   if (settingsList) {
     settingsList.innerHTML = '';
-    toolsData.filter(t => t.isUnlocked).forEach(t => {
+    toolsData.filter(t => t.isUnlocked && t.id !== 'image-converter').forEach(t => {
       const span = document.createElement('span');
       span.className = 'badge-tool';
       span.textContent = `${t.icon} ${t.name}`;
