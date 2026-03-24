@@ -294,6 +294,17 @@
     overflow: hidden;
     box-shadow: 0 40px 100px rgba(0,0,0,0.6);
   }
+  .dash-page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
   .dash-bar {
     background: #161d26;
     padding: 14px 20px;
@@ -1023,6 +1034,37 @@
   .disclaimer-inner li { font-size: 0.75rem; color: var(--text-dim); line-height: 1.6; display: flex; gap: 8px; }
   .disclaimer-inner li::before { content: '※'; color: var(--neon-cyan); flex-shrink: 0; }
 
+  /* ── SUPPORT ── */
+  #support { padding: 100px 24px; max-width: 1000px; margin: 0 auto; text-align: center; }
+  .support-desc { color: var(--text-dim); margin-bottom: 48px; line-height: 1.8; }
+  .support-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    padding: 60px;
+    border-radius: 20px;
+  }
+  .support-qr-wrap {
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,245,212,0.1);
+  }
+  .qr-label { color: #080b10; font-size: 0.7rem; font-weight: 800; margin-top: 8px; font-family: 'Space Mono', monospace; }
+  .support-info { text-align: left; }
+  .support-features { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+  .s-feat { font-size: 0.95rem; font-weight: 700; color: var(--text); display: flex; gap: 12px; align-items: center; }
+  .s-feat .icon { color: var(--neon-cyan); }
+
+  @media (max-width: 768px) {
+    .support-flex { flex-direction: column; gap: 40px; padding: 40px 24px; }
+    .support-info { text-align: center; display: flex; flex-direction: column; align-items: center; }
+    #support { padding: 60px 24px; }
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
     nav { padding: 16px 20px; }
@@ -1085,8 +1127,8 @@
   <p class="hero-sub">ブックマークはもう不要。必要な機能だけをアンロックして、<br>自分専用の作業環境を手に入れよう。</p>
 
   <div class="hero-btns">
-    <a href="#pricing" class="btn-primary">
-      <span>🔓</span> ツールを入手する（LINEへ）
+    <a href="#pricing" class="btn-primary" id="hero-buy-btn">
+      <span>🚀</span> 今すぐツールをアンロックする
     </a>
     <a href="#tools" class="btn-secondary">
       ツール一覧を見る →
@@ -1111,7 +1153,11 @@
           <div class="dash-menu-item"><span class="icon">⚙️</span> 設定</div>
         </div>
         <div class="dash-main">
-          <div class="dash-title">MY TOOLS — Active License</div>
+          <div class="premium-status-banner" id="premium-banner">
+          <span class="icon">✨</span>
+          <span>プレミアム・ライセンスが有効です。すべての機能をご利用いただけます。</span>
+        </div>
+        <div class="dash-page-title">MY TOOLS <span class="badge" id="license-badge">STANDARD</span></div>
           <div class="tool-cards">
             <div class="tool-card unlocked">
               <div class="unlock-badge">ACTIVE</div>
@@ -1264,8 +1310,8 @@
     <div class="step reveal">
       <div class="step-circle">01</div>
       <div class="step-label">Step One</div>
-      <h3>ライセンスキーを購入</h3>
-      <p>LINEから案内に従い、ご希望のツールのライセンスキーを購入します。</p>
+      <h3>カード決済で即座に購入</h3>
+      <p>Stripe決済（クレジットカード等）で、安全かつスピーディーにライセンスを購入します。</p>
     </div>
     <div class="step reveal reveal-delay-1">
       <div class="step-circle">02</div>
@@ -1354,10 +1400,38 @@
         <li style="color:var(--neon-cyan); font-weight:bold; line-height: 1.4;">✨ 【特典】今後の追加ツール等も基本すべて永続無料<br><span style="font-size: 0.75rem; font-weight: normal; color: var(--text-dim);">※一部の高度な専門ツールのみ有料オプションの予定あり</span></li>
       </ul>
 
-      <a href="https://line.me/R/ti/p/@fta7513f?oat_content=url&ts=06131131" class="btn-line" target="_blank" rel="noopener">
-        <span>💬</span> 今すぐライセンスを入手する（LINE）
+      <a href="https://buy.stripe.com/fZu7sLbVf9kXa9heUPfw400" class="btn-line" target="_blank" rel="noopener" id="pricing-buy-btn">
+        <span>💳</span> 今すぐライセンスを入手する（Stripe決済）
       </a>
-      <p class="btn-line-note">LINEを追加後、ご案内に沿って購入手続きへ進めます。<br>ご不明な点もLINEでお気軽にご相談ください。</p>
+      <p class="btn-line-note">決済完了後、即座にシークレットポータルへリダイレクトされます。<br>ご不明な点もLINEでお気軽にご相談いただけます。</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SUPPORT / CONTACT -->
+<section id="support">
+  <div class="support-inner reveal">
+    <div class="section-label">サポート — Support</div>
+    <h2>ご購入前のご相談</h2>
+    <p class="support-desc">「自分の環境で使えるか不安」「どのツールがおすすめ？」など、<br>気になることがあれば「いいとも🐾公式LINE」でいつでもお気軽にご相談ください。飯島が直接お答えします。</p>
+    
+    <div class="support-flex">
+      <div class="support-qr-wrap">
+        <img src="resources/qr/line-qr.png" alt="いいとも🐾公式LINE QRコード" style="width: 180px; height: 180px; display: block;">
+        <p class="qr-label">スマホでスキャン</p>
+      </div>
+      <div class="support-info">
+        <div class="support-features">
+          <div class="s-feat"><span class="icon">✅</span> 相談はすべて無料</div>
+          <div class="s-feat"><span class="icon">✅</span> 原則24時間以内に返信</div>
+          <div class="s-feat"><span class="icon">✅</span> 強引な勧誘は一切ありません</div>
+        </div>
+        <a href="https://line.me/R/ti/p/@fta7513f?oat_content=url&ts=06131131" class="btn-line" target="_blank" rel="noopener">
+          <span>💬</span> いいとも🐾公式LINEで聞く
+        </a>
+      </div>
     </div>
   </div>
 </section>

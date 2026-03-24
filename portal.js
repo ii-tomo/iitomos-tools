@@ -27,7 +27,7 @@ const toolsData = [
 
 // 初期設定：localStorageからアンロック状態を復元 (あれば)
 let savedUnlocks = JSON.parse(localStorage.getItem('iitomo_unlocked_tools') || '[]');
-
+let isPremium = localStorage.getItem('iitomo_premium_unlocked') === 'true';
 
 if (savedUnlocks.length > 0) {
   toolsData.forEach(tool => {
@@ -35,6 +35,11 @@ if (savedUnlocks.length > 0) {
       tool.isUnlocked = true;
     }
   });
+}
+
+// プレミアム状態なら全ツールをアンロック扱いにする
+if (isPremium) {
+  toolsData.forEach(tool => tool.isUnlocked = true);
 }
 
 const renderToolCards = () => {
@@ -192,6 +197,67 @@ modalSubmit.addEventListener('click', () => {
     modalError.textContent = '無効なライセンスキーです。正しく入力してください。';
   }
 });
+
+// ── Stripe & Premium 連携 ──
+
+const updatePremiumUI = () => {
+  const banner = document.getElementById('premium-banner');
+  const upgradeCard = document.getElementById('premium-upgrade-card');
+  const badge = document.getElementById('license-badge');
+
+  if (isPremium) {
+    if (banner) banner.classList.add('active');
+    if (upgradeCard) upgradeCard.style.display = 'none';
+    if (badge) {
+      badge.textContent = 'PREMIUM';
+      badge.style.background = 'rgba(255, 204, 0, 0.1)';
+      badge.style.color = 'var(--neon-amber)';
+      badge.style.borderColor = 'rgba(255, 204, 0, 0.3)';
+    }
+  } else {
+    if (banner) banner.classList.remove('active');
+    if (upgradeCard) upgradeCard.style.display = 'flex';
+  }
+};
+
+const showSuccessToast = () => {
+  const toast = document.getElementById('purchase-success-toast');
+  if (toast) {
+    toast.classList.add('active');
+    setTimeout(() => toast.classList.remove('active'), 6000);
+  }
+};
+
+// 購入成功の検知
+const checkPurchaseStatus = () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('purchase') === 'success') {
+    isPremium = true;
+    localStorage.setItem('iitomo_premium_unlocked', 'true');
+    // 全ツールセットを有効化
+    toolsData.forEach(t => t.isUnlocked = true);
+    
+    updatePremiumUI();
+    renderToolCards();
+    showSuccessToast();
+
+    // URLからパラメータを消去（リロード対策）
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+};
+
+// 購入ボタンの初期化
+const btnBuy = document.getElementById('btn-buy-premium');
+if (btnBuy) {
+  btnBuy.addEventListener('click', () => {
+    // リアルStripeリンクへ移動
+    window.location.href = 'https://buy.stripe.com/fZu7sLbVf9kXa9heUPfw400';
+  });
+}
+
+// 初期実行
+checkPurchaseStatus();
+updatePremiumUI();
 
 // 初期レンダリング
 renderToolCards();

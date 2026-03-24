@@ -540,6 +540,7 @@ body::after {
   background: var(--grad-main);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 16px;
   letter-spacing: 0.1em;
 }
@@ -622,4 +623,111 @@ body::after {
   .settings-card .card-icon {
     width: 48px; height: 48px; font-size: 1.5rem;
   }
+}
+/* ── PREMIUM & CHECKOUT ── */
+.premium-status-banner {
+  display: none;
+  background: var(--grad-gold);
+  color: var(--bg);
+  padding: 12px 24px;
+  border-radius: 12px;
+  margin-bottom: 32px;
+  font-weight: 800;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.9rem;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 30px rgba(255, 170, 0, 0.2);
+  animation: slide-down 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.premium-status-banner.active { display: flex; }
+
+.premium-card {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(255, 204, 0, 0.05) 0%, rgba(255, 107, 53, 0.05) 100%);
+  border: 1px dashed rgba(255, 204, 0, 0.4);
+  padding: 32px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.premium-card::before {
+  content: 'PREMIUM';
+  position: absolute;
+  top: -10px; right: -10px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 4rem;
+  opacity: 0.03; font-style: italic;
+  pointer-events: none;
+}
+.premium-info h2 { font-size: 1.4rem; color: var(--neon-amber); margin-bottom: 8px; }
+.premium-info p { font-size: 0.85rem; color: var(--text-dim); line-height: 1.6; max-width: 400px; }
+
+.btn-stripe {
+  background: #635bff; /* Stripe Purple */
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
+}
+.btn-stripe:hover {
+  background: #7a73ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(99, 91, 255, 0.4);
+}
+.btn-stripe svg { width: 1.2rem; height: 1.2rem; }
+
+/* Success Toast */
+.success-toast {
+  position: fixed;
+  bottom: 40px; right: 40px;
+  background: var(--surface);
+  border: 1px solid var(--neon-cyan);
+  padding: 20px 24px;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5), var(--glow-cyan);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transform: translateX(120%);
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.success-toast.active { transform: translateX(0); }
+.toast-icon {
+  width: 40px; height: 40px;
+  background: rgba(0, 245, 212, 0.1);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--neon-cyan); font-size: 1.2rem;
+}
+.toast-content h4 { font-size: 0.9rem; margin-bottom: 2px; }
+.toast-content p { font-size: 0.75rem; color: var(--text-dim); }
+
+@media (max-width: 768px) {
+  .premium-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+  .btn-stripe { width: 100%; justify-content: center; }
+  .success-toast {
+    inset: auto 20px 100px 20px;
+    transform: translateY(200%);
+  }
+  .success-toast.active { transform: translateY(0); }
 }
