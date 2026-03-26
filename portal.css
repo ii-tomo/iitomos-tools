@@ -569,21 +569,21 @@ body::after {
   .url { text-align: left; font-size: 0.65rem; }
   .dots { display: none; }
   
-  .content-body { padding: 24px 20px 100px 20px; }
+  .content-body { padding: 24px 20px 140px 20px; } /* 余白を増やして見切れを確実に防止 */
   
   /* ボトムナビゲーション */
   .bottom-nav {
     display: flex;
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    height: 70px;
+    min-height: 80px; /* 高さを少し増やして安定させる */
     background: rgba(13,17,23,0.95);
     backdrop-filter: blur(20px);
     border-top: 1px solid var(--border);
     z-index: 100;
     justify-content: space-around;
     align-items: center;
-    padding-bottom: env(safe-area-inset-bottom); /* iOS SafeArea */
+    padding-bottom: calc(10px + env(safe-area-inset-bottom)); /* 下部の余白を強化 */
   }
   .bottom-nav .nav-item {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
@@ -730,4 +730,32 @@ body::after {
     transform: translateY(200%);
   }
   .success-toast.active { transform: translateY(0); }
+}
+
+/* ── バージョン表記スタイル ── */
+.version-tag-sidebar {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  opacity: 0.5;
+  margin-top: 20px;
+  padding: 0 16px;
+}
+
+.version-tag-content {
+  display: none; /* デフォルト（PC）では非表示 */
+}
+
+@media (max-width: 768px) {
+  .version-tag-sidebar { display: none; }
+  .version-tag-content {
+    display: block;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    opacity: 0.4;
+    margin-top: 40px;
+    padding-bottom: 20px;
+  }
 }
