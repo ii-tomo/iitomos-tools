@@ -262,6 +262,22 @@ body::after {
 }
 .tool-card.locked .tool-card-status { color: var(--text-dim); }
 
+.tool-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tool-card-update {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  opacity: 0.8;
+}
+
 .unlock-badge, .lock-badge {
   position: absolute;
   top: 16px; right: 16px;
@@ -587,12 +603,18 @@ body::after {
   }
   .bottom-nav .nav-item {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 8px 16px; border-radius: 0; border: none !important; color: var(--text-dim);
+    padding: 8px 4px; border-radius: 0; border: none !important; color: var(--text-dim);
     outline: none !important;
     -webkit-tap-highlight-color: transparent;
+    flex: 1; /* 均等に広げる */
+    min-width: 0; /* はみ出し防止 */
   }
   .bottom-nav .nav-item .icon { font-size: 1.2rem; }
-  .bottom-nav .nav-item .label { font-size: 0.6rem; font-weight: 700; }
+  .bottom-nav .nav-item .label { 
+    font-size: 0.55rem; 
+    font-weight: 700; 
+    white-space: nowrap; /* 折り返し禁止 */
+  }
   .bottom-nav .nav-item.active {
     background: transparent !important; border: none !important; color: var(--neon-cyan) !important;
     box-shadow: none !important;
@@ -601,15 +623,16 @@ body::after {
   /* カードグリッドを1列に */
   .tool-cards { grid-template-columns: 1fr; gap: 16px; }
   
-  /* アプリ画面のスクロール防止＆フル画面化 */
-  #view-qr .view-header-flex > div,
-  #view-translate .view-header-flex > div {
-    display: none;
+  /* スマホ版でのタイトル非表示（mobile-hideクラス） */
+  .mobile-hide {
+    display: none !important;
   }
+  
   .btn-manual-toggle {
     width: 100%;
     justify-content: center;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
+    padding: 12px;
   }
   .app-iframe-container { 
     height: calc(100vh - 180px); /* ダブルスクロール防止 */

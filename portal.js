@@ -7,6 +7,7 @@ const toolsData = [
     name: 'QRジェネレーター',
     icon: '🔍',
     desc: '美しいQRコードと短縮URLを瞬時に作成・シェア。',
+    updatedAt: '2026/03/24',
     isUnlocked: false
   },
   {
@@ -14,13 +15,22 @@ const toolsData = [
     name: '翻訳 & プロンプト',
     icon: '🌎',
     desc: '日英連携でAI向けの完璧なプロンプトを構築。',
+    updatedAt: '2026/03/24',
     isUnlocked: false
   },
   {
     id: 'image-converter',
-    name: '画像コンバーター (Add-on)',
+    name: '画像コンバーター',
     icon: '🔄',
-    desc: '画像をドラッグ＆ドロップで瞬時にフォーマット変換（近日公開）。',
+    desc: '画像をドラッグ＆ドロップで瞬時にフォーマット変換。',
+    updatedAt: '2026/03/26',
+    isUnlocked: false
+  },
+  {
+    id: 'voice-pdf',
+    name: 'PDF & 音声ツール',
+    icon: '🎙️',
+    desc: 'AI搭載のPDF翻訳・音声文字起こしツール（近日公開）。',
     isUnlocked: true
   }
 ];
@@ -55,7 +65,10 @@ const renderToolCards = () => {
       <span class="tool-card-icon">${tool.icon}</span>
       <div class="tool-card-name">${tool.name}</div>
       <div class="tool-card-desc">${tool.desc}</div>
-      <div class="tool-card-status">${tool.isUnlocked ? 'Unlocked' : 'Locked'}</div>
+      <div class="tool-card-footer">
+        <div class="tool-card-status">${tool.id === 'voice-pdf' ? 'COMING SOON' : (tool.isUnlocked ? 'UNLOCKED' : 'LOCKED')}</div>
+        ${tool.updatedAt ? `<div class="tool-card-update">Updated: ${tool.updatedAt}</div>` : ''}
+      </div>
     `;
 
     // アンロックされている場合はクリックで遷移
@@ -74,7 +87,7 @@ const renderToolCards = () => {
   const settingsList = document.getElementById('settings-unlocked-list');
   if (settingsList) {
     settingsList.innerHTML = '';
-    toolsData.filter(t => t.isUnlocked && t.id !== 'image-converter').forEach(t => {
+    toolsData.filter(t => t.isUnlocked && t.id !== 'voice-pdf').forEach(t => {
       const span = document.createElement('span');
       span.className = 'badge-tool';
       span.textContent = `${t.icon} ${t.name}`;
@@ -167,7 +180,7 @@ modalSubmit.addEventListener('click', () => {
   } else if (key === 'IITOMO-TRANS-2026') {
     targetTools = ['translate'];
   } else if (key === 'IITOMO-PRO-2026' || key === 'IITOMO-ADDON' /* デモ用 */) {
-    targetTools = ['qr', 'translate', 'image-converter'];
+    targetTools = ['qr', 'translate', 'image-converter', 'voice-pdf'];
   }
 
   if (targetTools.length > 0) {
@@ -255,8 +268,43 @@ if (btnBuy) {
   });
 }
 
+// ── マイグレーション (既存ユーザーへの自動反映) ──
+const migrateLegacyUnlocks = () => {
+  // 既存の「QR」と「翻訳」の両方を持っている＝プロ版購入者とみなし、
+  // 新機能（画像コンバーター、PDF&音声）を自動でアンロックする
+  if (savedUnlocks.includes('qr') && savedUnlocks.includes('translate')) {
+    let updated = false;
+    ['image-converter', 'voice-pdf'].forEach(id => {
+      if (!savedUnlocks.includes(id)) {
+        savedUnlocks.push(id);
+        const tool = toolsData.find(t => t.id === id);
+        if (tool) tool.isUnlocked = true;
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      localStorage.setItem('iitomo_unlocked_tools', JSON.stringify(savedUnlocks));
+      renderToolCards();
+      console.log('Migration: New tools auto-unlocked for legacy PRO users.');
+    }
+  }
+};
+
+// ── アップデート情報の反映 ──
+const updateToolDates = () => {
+  toolsData.forEach(tool => {
+    const el = document.getElementById(`update-${tool.id}`);
+    if (el) {
+      el.textContent = tool.updatedAt ? `(Updated: ${tool.updatedAt})` : '';
+    }
+  });
+};
+
 // 初期実行
 checkPurchaseStatus();
+migrateLegacyUnlocks();
+updateToolDates();
 updatePremiumUI();
 
 // 初期レンダリング

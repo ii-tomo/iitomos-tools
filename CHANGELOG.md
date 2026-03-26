@@ -2,11 +2,20 @@
 
 All notable changes to the `iitomos-tools` project will be documented in this file.
 
-## [2.1.0] - 2026-03-23 (Portal & Delivery Update)
+## [2.3.0] - 2026-03-26 (Image Converter & Next Gen Tooling)
 ### Added
-- **Delivery Skill**: Integrated `iitomos_delivery` skill for automated customer support.
-- **Delivery Template**: Added specifically tailored email draft for the first customer (徳田様).
-- **QR Resources**: Created `resources/qr` folder for organized management of LINE and Portal QR codes.
+- **Image Converter**: Fully implemented client-side image format conversion tool (JPEG, PNG, WebP).
+- **Tool Customizer**: Integrated image-converter as a core tool in the portal.
+- **Next Gen Placeholder**: Added "PDF & 音声ツール" card and view for upcoming AI-powered features.
+### Improved
+- **Portal Navigation**: Reorganized sidebar and bottom navigation to accommodate growing toolset (5 items).
+- **UX**: Replaced "Coming Soon" for Image Converter with a functional iframe-based tool.
+- **Stability**: Added resize observers to newly added tool iframes for seamless portal integration.
+
+## [2.2.0] - 2026-03-25 (Stripe & Security Update)
+### Added
+- **Stripe Integration**: Added automated payment processing and license unlocking via Stripe Checkout.
+- **Security**: Implemented secret URL access and license key validation for premium features.
 ### Improved
 - **Portal UI**: Significantly improved card visibility and contrast for dark mode.
 - **Portal Navigation**: Added "Coming Soon" placeholder for the Image Converter tool to prevent black screen errors.
