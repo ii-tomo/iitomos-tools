@@ -1,61 +1,27 @@
-# Changelog
+# 更新履歴 (CHANGELOG)
 
-All notable changes to the `iitomos-tools` project will be documented in this file.
+ポータルサイト `iitomos-tools` の変更履歴を記録します。
 
-## [2.3.0] - 2026-03-26 (Image Converter & Next Gen Tooling)
-### Added
-- **Image Converter**: Fully implemented client-side image format conversion tool (JPEG, PNG, WebP).
-- **Tool Customizer**: Integrated image-converter as a core tool in the portal.
-- **Next Gen Placeholder**: Added "PDF & 音声ツール" card and view for upcoming AI-powered features.
-### Improved
-- **Portal Navigation**: Reorganized sidebar and bottom navigation to accommodate growing toolset (5 items).
-- **UX**: Replaced "Coming Soon" for Image Converter with a functional iframe-based tool.
-- **Stability**: Added resize observers to newly added tool iframes for seamless portal integration.
+## [2.3.2] - 2026-03-26
+### 追加
+- 各ツールの詳細画面（view-section）に最終更新日を表示。
+- 開発中のツール（PDF & 音声）では更新情報を自動で隠すロジックを `portal.js` に追加。
+- 将来の拡張に向けた「モバイルUI設計ルール」を `banbi/TODO.md` に明文化。
 
-## [2.2.0] - 2026-03-25 (Stripe & Security Update)
-### Added
-- **Stripe Integration**: Added automated payment processing and license unlocking via Stripe Checkout.
-- **Security**: Implemented secret URL access and license key validation for premium features.
-### Improved
-- **Portal UI**: Significantly improved card visibility and contrast for dark mode.
-- **Portal Navigation**: Added "Coming Soon" placeholder for the Image Converter tool to prevent black screen errors.
-- **Provider Branding**: Updated portal and email templates with official provider details (RCS 飯島知美).
+## [2.3.1] - 2026-03-26
+### 変更
+- モバイル表示でのタイトル縦潰れを防止するため、`.mobile-hide` クラスによる非表示ルールを導入。
+- 各ツールカードに「最終更新日 (Updated)」の表示を追加。
 
-## [1.4.0] - 2026-03-19 (QR Tool Update)
-### Improved
-- **Auto-Redirect**: Enhanced auto-redirect logic for image uploads and pastes.
-- **UI Fallback**: Added "Open Link" button when auto-redirect is blocked by browser.
-- **Scanner UI**: Optimized scanner size for better mobile and desktop experience.
+## [2.3.0] - 2026-03-26
+### 追加
+- 新ツール「画像コンバーター」を正式実装。
+- ポータル全体のモバイルUIを5ツール構成に最適化。
+- 既存のPRO版（QR/翻訳）ユーザー向けの自動アンロック・マイグレーション機能を実装。
+- 「PDF & 音声ツール」のプレースホルダー（Coming Soon）を追加。
 
-## [1.2.0] - 2026-03-19 (Translator Update)
-### Improved
-- **Premium UI**: Synchronized design with QR tool for a consistent "Premium" experience.
-- **Better Sync**: Master-Sync operational strategy applied.
-
-## [1.3.0] - 2026-03-18 (QR Tool UI Update)
-### Improved
-- **Scanner UI**: Added scan line and corner guides for better camera alignment.
-- **Auto-Redirect**: Automatically opens decoded URLs in a new tab.
-
-## [1.2.0] - 2026-03-15 (QR Tool Update)
-### Added
-- **Camera Reader**: Real-time QR code scanning using the camera.
-- **Short URL Integration (Reader)**: Automatically shorten URLs decoded in the Reader tab.
-- **Improved UI**: Scripted "CM-style" promotional video recordings for better demonstration.
-- **Versioning**: Added version display to the UI footer for all tools.
-
-## [1.1.0] - 2026-03-10 (Translator Update)
-### Added
-- **Shorten English Feature**: Automated shortening of translated text when exceeding character limits.
-- **Local Backup**: Persistence of user input (titles, descriptions, etc.) using `localStorage`.
-
-## [1.1.0] - 2026-03-15 (QR Tool Update)
-### Added
-- **QR Reader**: Ability to decode QR codes from uploaded images.
-- **Tabbed Navigation**: Switch between Generator and Reader modes.
-
-## [1.0.0] - 2026-03-09 (Initial Release)
-### Added
-- **QR Generator**: Basic QR code generation from text/URL.
-- **LINE Stamp Helper**: Initial translation and copy features.
-- **Portal Page**: Unified entrance for all tools.
+## [2.1.0] - 2026-03-24
+### 追加
+- ポータルサイトの公開（シークレットアクセス版）。
+- QRジェネレーター・翻訳ツールの統合。
+- ライセンスキー認証システムの導入。
