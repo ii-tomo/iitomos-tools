@@ -756,6 +756,6 @@ body::after {
     color: var(--text-dim);
     opacity: 0.4;
     margin-top: 40px;
-    padding-bottom: 20px;
+    padding-bottom: 100px; /* タブバーに隠れないよう余白を確保 */
   }
 }
