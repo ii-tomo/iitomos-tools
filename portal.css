@@ -587,12 +587,15 @@ body::after {
   }
   .bottom-nav .nav-item {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
-    padding: 8px 16px; border-radius: 0; border: none; color: var(--text-dim);
+    padding: 8px 16px; border-radius: 0; border: none !important; color: var(--text-dim);
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
   }
   .bottom-nav .nav-item .icon { font-size: 1.2rem; }
   .bottom-nav .nav-item .label { font-size: 0.6rem; font-weight: 700; }
   .bottom-nav .nav-item.active {
-    background: transparent; border: none; color: var(--neon-cyan);
+    background: transparent !important; border: none !important; color: var(--neon-cyan) !important;
+    box-shadow: none !important;
   }
   
   /* カードグリッドを1列に */
@@ -701,13 +704,15 @@ body::after {
   border-radius: 12px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.5), var(--glow-cyan);
   z-index: 2000;
-  display: flex;
+  display: none; /* デフォルトで非表示 */
   align-items: center;
   gap: 16px;
-  transform: translateX(120%);
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.success-toast.active { transform: translateX(0); }
+.success-toast.active { display: flex; animation: toast-slide-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes toast-slide-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .toast-icon {
   width: 40px; height: 40px;
   background: rgba(0, 245, 212, 0.1);
@@ -725,11 +730,6 @@ body::after {
     padding: 24px;
   }
   .btn-stripe { width: 100%; justify-content: center; }
-  .success-toast {
-    inset: auto 20px 100px 20px;
-    transform: translateY(200%);
-  }
-  .success-toast.active { transform: translateY(0); }
 }
 
 /* ── バージョン表記スタイル ── */
