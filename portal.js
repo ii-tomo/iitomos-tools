@@ -30,7 +30,8 @@ const toolsData = [
     id: 'voice-pdf',
     name: 'PDF & 音声ツール',
     icon: '🎙️',
-    desc: 'AI搭載のPDF翻訳・音声文字起こしツール（近日公開）。',
+    desc: 'AI搭載のPDF翻訳・音声文字起こし。',
+    updatedAt: '2026/03/27',
     isUnlocked: true
   }
 ];
@@ -66,7 +67,7 @@ const renderToolCards = () => {
       <div class="tool-card-name">${tool.name}</div>
       <div class="tool-card-desc">${tool.desc}</div>
       <div class="tool-card-footer">
-        <div class="tool-card-status">${tool.id === 'voice-pdf' ? 'COMING SOON' : (tool.isUnlocked ? 'UNLOCKED' : 'LOCKED')}</div>
+        <div class="tool-card-status">${tool.isUnlocked ? 'UNLOCKED' : 'LOCKED'}</div>
         ${tool.updatedAt ? `<div class="tool-card-update">Updated: ${tool.updatedAt}</div>` : ''}
       </div>
     `;

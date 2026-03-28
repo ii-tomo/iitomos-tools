@@ -10,7 +10,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 /**
- * Stripe Webhook ハンドラ (メインPC統合用テンプレート)
+ * Stripe Webhook ハンドラ
+ * 決済成功時にメタデータから userId と credits を取得し、Supabase の残高を更新します。
  */
 export async function POST(req: Request) {
   const body = await req.text();
@@ -20,33 +21,35 @@ export async function POST(req: Request) {
 
   try {
     if (!sig || !endpointSecret) {
-      console.warn('Webhook signature or secret missing');
-      // 開発中やテスト用: 署名検証をスキップしてモックイベントを処理する場合はここを調整
-      event = JSON.parse(body);
-    } else {
-      event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
+      // 署名検証用のシークレットがない場合はエラー（セキュリティのため）
+      console.error('Webhook signature or secret missing');
+      return NextResponse.json({ error: 'Webhook configuration error' }, { status: 400 });
     }
+    event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
   } catch (err: any) {
     console.error(`Webhook Error: ${err.message}`);
     return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
   }
 
-  // 決済成功イベントの処理
+  // 決済成功イベント (checkout.session.completed) の処理
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
     const userId = session.metadata?.userId;
-    const amount = session.metadata?.credits; // Stripe Checkout時に metadata に追加することを想定
+    const credits = session.metadata?.credits;
 
-    if (userId && amount) {
+    if (userId && credits) {
       const supabase = await createClient();
-      const result = await addCredits(supabase, userId, parseInt(amount));
+      const result = await addCredits(supabase, userId, parseInt(credits));
       
       if (result.success) {
-        console.log(`Success: Added ${amount} credits to user ${userId}`);
+        console.log(`[Webhook] Success: Added ${credits} credits to user ${userId}`);
       } else {
-        console.error(`Failed to add credits: ${result.error}`);
+        console.error(`[Webhook] Failed to add credits: ${result.error}`);
+        // ここでエラーを返すと Stripe がリトライしてくれます
         return NextResponse.json({ error: 'Failed to update credits' }, { status: 500 });
       }
+    } else {
+      console.warn('[Webhook] Missing metadata in session:', session.id);
     }
   }
 
