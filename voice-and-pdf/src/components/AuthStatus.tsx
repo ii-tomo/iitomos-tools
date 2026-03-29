@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import type { User } from "@supabase/supabase-js";
+import type { User, Session } from "@supabase/supabase-js";
 import Link from "next/link";
 import { LogIn, LogOut, CreditCard, Loader2, Coins, Crown } from "lucide-react";
 
@@ -16,37 +16,92 @@ export function AuthStatus() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showInsufficientModal, setShowInsufficientModal] = useState(false);
   const supabase = createClient();
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("subscription_plan, credits_remaining")
-      .eq("id", userId)
-      .single();
-    if (data) setProfile(data);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("subscription_plan, credits_remaining")
+        .eq("id", userId)
+        .maybeSingle();
+      
+      if (error) {
+        console.error("Supabase Profile Fetch Error:", error);
+      } else if (data) {
+        setProfile(data);
+      }
+    } catch (err) {
+      console.error("Unexpected fetch error:", err);
+    }
   };
 
   useEffect(() => {
-    const init = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      if (user) await fetchProfile(user.id);
-      setLoading(false);
-    };
-    init();
+    let isMounted = true;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      if (currentUser) {
-        await fetchProfile(currentUser.id);
-      } else {
-        setProfile(null);
+    // 1. マウント時に確実に現在のユーザー情報を取得してローディングを解除する
+    // getUser() はネットワーク通信＋Web Lockを使うためページごとにフリーズする。
+    // getSession() はローカルキャッシュを読むだけなのでロック競合が起きない。
+    const loadSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) console.error("Auth get session error:", error);
+        
+        if (!isMounted) return;
+        
+        const user = session?.user ?? null;
+        setUser(user);
+        if (user) {
+          await fetchProfile(user.id);
+        } else {
+          setProfile(null);
+        }
+      } catch (err) {
+        console.error("Unexpected auth init error:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    loadSession();
+
+
+    // 2. 以降のログイン・ログアウトなどの状態変化を監視する
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event: string, session: Session | null) => {
+      if (!isMounted) return;
+      try {
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
+        
+        if (currentUser) {
+          await fetchProfile(currentUser.id);
+        } else {
+          setProfile(null);
+        }
+      } catch (err) {
+        console.error("Auth state change error:", err);
       }
     });
 
-    return () => subscription.unsubscribe();
+    const handleCreditsUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<{ credits: number }>;
+      setProfile(prev => prev ? { ...prev, credits_remaining: customEvent.detail.credits } : null);
+    };
+
+    const handleInsufficientModal = () => {
+      setShowInsufficientModal(true);
+    };
+
+    window.addEventListener('credits_updated', handleCreditsUpdate);
+    window.addEventListener('show_insufficient_modal', handleInsufficientModal);
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+      window.removeEventListener('credits_updated', handleCreditsUpdate);
+      window.removeEventListener('show_insufficient_modal', handleInsufficientModal);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -155,6 +210,39 @@ export function AuthStatus() {
             </div>
           </div>
         </>
+      )}
+
+      {/* Insufficient Credits Modal */}
+      {showInsufficientModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowInsufficientModal(false)} />
+          <div className="relative w-full max-w-sm overflow-hidden rounded-[32px] border border-white/10 bg-neutral-900 shadow-2xl p-6 sm:p-8 animate-in fade-in zoom-in duration-200">
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-4 rounded-full bg-red-500/20 p-4 text-red-500 ring-1 ring-red-500/30">
+                <Coins className="h-8 w-8" />
+              </div>
+              <h3 className="mb-2 text-xl font-bold text-white">クレジットが不足しています</h3>
+              <p className="mb-8 text-sm text-neutral-400">
+                AI機能をご利用いただくためのクレジットが0になりました。继续して利用するにはチャージまたはプランをアップグレードしてください。
+              </p>
+              
+              <Link
+                href="/pricing"
+                onClick={() => setShowInsufficientModal(false)}
+                className="w-full flex justify-center items-center gap-2 rounded-2xl bg-indigo-600 px-4 py-3.5 text-sm font-bold text-white transition-all hover:bg-indigo-500 active:scale-95 shadow-lg shadow-indigo-500/20 mb-3"
+              >
+                <Crown className="h-4 w-4" />
+                プランとクレジットを見る
+              </Link>
+              <button
+                onClick={() => setShowInsufficientModal(false)}
+                className="text-xs font-bold text-neutral-500 hover:text-neutral-300 transition-colors"
+              >
+                あとで
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

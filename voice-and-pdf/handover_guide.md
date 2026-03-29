@@ -28,3 +28,9 @@
 
 ## 4. フロントエンド
 - `src/components/AuthStatus.tsx` を共通ヘッダーに配置することで、ログイン状態と残高を常に表示できます。
+- `iitomos-tools/index.html` および `portal-secret-access.html` に「PDF & 音声ツール (Tool 03)」としてリンクが追加されました。
+- クレジット消費時の同期ロジック (イベント `credits_updated` を使用した即時反映) は実装完了しています。
+
+---
+**ステータス [最終化完了]:**
+Supabase の `profiles` テーブルの実装、Stripe Webhook でのクレジット付与連携、および各 AI アプリケーション側でのクレジット消費イベントの統合がすべて完了しました。今後は本番環境へのデプロイを行ってください。

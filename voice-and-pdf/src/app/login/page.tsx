@@ -41,7 +41,7 @@ export default function LoginPage() {
       return;
     }
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -52,7 +52,13 @@ export default function LoginPage() {
     if (error) {
       setMessage({ type: "error", text: error.message });
     } else {
-      setMessage({ type: "success", text: "確認メールを送信しました！メール内のリンクをクリックして登録を完了してください。" });
+      // メール確認機能がOFF（即時ログイン可能）の場合は自動でTOPへ移動
+      if (data.session) {
+        window.location.href = "/";
+      } else {
+        // メール確認が必要な場合はメッセージを表示して待機
+        setMessage({ type: "success", text: "確認メールを送信しました！メール内のリンクをクリックして登録を完了してください。" });
+      }
     }
     setIsLoading(false);
   };

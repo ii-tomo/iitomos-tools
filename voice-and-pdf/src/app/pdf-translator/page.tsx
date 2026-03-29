@@ -51,7 +51,7 @@ export default function PdfTranslator() {
     }
   };
 
-  const translatePage = async (pageIndex: number) => {
+  const translatePage = async (pageIndex: number): Promise<boolean> => {
     setPages((prev) => {
       const copy = [...prev];
       copy[pageIndex].isTranslating = true;
@@ -66,6 +66,18 @@ export default function PdfTranslator() {
       });
       const data = await response.json();
       
+      if (!response.ok) {
+        if (response.status === 402 || data.code === 'INSUFFICIENT_CREDITS') {
+          window.dispatchEvent(new CustomEvent('show_insufficient_modal'));
+          setPages((prev) => {
+            const copy = [...prev];
+            copy[pageIndex].isTranslating = false;
+            return copy;
+          });
+          return false;
+        }
+      }
+
       setPages((prev) => {
         const copy = [...prev];
         copy[pageIndex].isTranslating = false;
@@ -76,6 +88,12 @@ export default function PdfTranslator() {
         }
         return copy;
       });
+
+      if (data.creditsRemaining !== undefined) {
+        window.dispatchEvent(new CustomEvent('credits_updated', { detail: { credits: data.creditsRemaining } }));
+      }
+      
+      return true;
     } catch (e) {
       console.error(e);
       setPages((prev) => {
@@ -84,6 +102,7 @@ export default function PdfTranslator() {
         copy[pageIndex].translatedText = '[翻訳失敗]';
         return copy;
       });
+      return false;
     }
   };
 
@@ -93,7 +112,8 @@ export default function PdfTranslator() {
     
     for (let i = 0; i < pages.length; i++) {
       if (!pages[i].translatedText) {
-        await translatePage(i);
+        const success = await translatePage(i);
+        if (!success) break;
         await new Promise(resolve => setTimeout(resolve, 500));
       }
     }

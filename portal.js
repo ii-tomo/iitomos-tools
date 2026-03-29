@@ -31,7 +31,7 @@ const toolsData = [
     name: 'PDF & 音声ツール',
     icon: '🎙️',
     desc: 'AI搭載のPDF翻訳・音声文字起こし。',
-    updatedAt: '2026/03/27',
+    updatedAt: '2026/03/29',
     isUnlocked: true
   }
 ];

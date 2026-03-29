@@ -102,10 +102,17 @@ export default function Transcription() {
       const data = await response.json();
 
       if (!response.ok) {
+        if (response.status === 402 || data.code === 'INSUFFICIENT_CREDITS') {
+          window.dispatchEvent(new CustomEvent('show_insufficient_modal'));
+          return;
+        }
         throw new Error(data.error || "文字起こしに失敗しました。");
       }
 
       setTranscribedText(data.text);
+      if (data.creditsRemaining !== undefined) {
+        window.dispatchEvent(new CustomEvent('credits_updated', { detail: { credits: data.creditsRemaining } }));
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.message || "予期せぬエラーが発生しました。");

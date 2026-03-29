@@ -61,7 +61,18 @@ export function AudioReader({ text }: AudioReaderProps) {
         body: JSON.stringify({ text }),
       });
       
-      if (!res.ok) throw new Error("TTS generation failed");
+      if (!res.ok) {
+        if (res.status === 402) {
+          window.dispatchEvent(new CustomEvent('show_insufficient_modal'));
+          throw new Error("INSUFFICIENT_CREDITS");
+        }
+        throw new Error("TTS generation failed");
+      }
+
+      const creditsHeader = res.headers.get("X-Credits-Remaining");
+      if (creditsHeader) {
+        window.dispatchEvent(new CustomEvent('credits_updated', { detail: { credits: parseInt(creditsHeader, 10) } }));
+      }
       
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -77,11 +88,13 @@ export function AudioReader({ text }: AudioReaderProps) {
       setIsPlaying(true);
       audioRef.current.play();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       setIsLoading(false);
       setIsPlaying(false);
-      alert("AI音声の生成に失敗しました。");
+      if (error.message !== "INSUFFICIENT_CREDITS") {
+        alert("AI音声の生成に失敗しました。");
+      }
     }
   };
 

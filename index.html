@@ -481,7 +481,7 @@
 
   .tools-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 2px;
     border: 1px solid var(--border);
     border-radius: 16px;
@@ -504,6 +504,7 @@
   }
   .tool-feature:nth-child(1)::before { background: var(--grad-main); }
   .tool-feature:nth-child(2)::before { background: var(--grad-gold); }
+  .tool-feature:nth-child(3)::before { background: linear-gradient(135deg, #007aff 0%, #00f5d4 100%); }
 
   .tool-feature-num {
     font-family: 'Space Mono', monospace;
@@ -521,6 +522,9 @@
   }
   .tool-feature:nth-child(2) .tool-feature-icon {
     filter: drop-shadow(0 0 12px rgba(191,90,242,0.4));
+  }
+  .tool-feature:nth-child(3) .tool-feature-icon {
+    filter: drop-shadow(0 0 12px rgba(0,122,255,0.4));
   }
   .tool-feature h3 {
     font-family: 'Syne', sans-serif;
@@ -559,6 +563,11 @@
     border-color: rgba(191,90,242,0.3);
     color: var(--neon-violet);
     background: rgba(191,90,242,0.05);
+  }
+  .tool-feature:nth-child(3) .tool-tag.highlight {
+    border-color: rgba(0,122,255,0.3);
+    color: #4da6ff;
+    background: rgba(0,122,255,0.05);
   }
 
   /* ── FEATURE BANNER ── */
@@ -647,6 +656,10 @@
     background: rgba(191,90,242,0.04);
   }
   .unlock-item.locked-item { opacity: 0.35; }
+  .unlock-item.blue-on {
+    border-color: rgba(0,122,255,0.3);
+    background: rgba(0,122,255,0.04);
+  }
   .unlock-item-icon { font-size: 1.4rem; display: block; margin-bottom: 6px; }
   .unlock-item-label {
     font-family: 'Space Mono', monospace;
@@ -657,6 +670,7 @@
   }
   .unlock-item.on .unlock-item-label { color: var(--neon-cyan); }
   .unlock-item.violet-on .unlock-item-label { color: var(--neon-violet); }
+  .unlock-item.blue-on .unlock-item-label { color: #4da6ff; }
 
   .feature-text h2 { margin-bottom: 24px; }
   .feature-text p {
@@ -1173,14 +1187,14 @@
             </div>
             <div class="tool-card locked">
               <div class="lock-badge">🔒</div>
-              <span class="tool-card-icon">📅</span>
-              <div class="tool-card-name">スケジューラー</div>
+              <span class="tool-card-icon">🔄</span>
+              <div class="tool-card-name">画像コンバーター</div>
               <div class="tool-card-status">Locked</div>
             </div>
             <div class="tool-card locked">
               <div class="lock-badge">🔒</div>
-              <span class="tool-card-icon">✨</span>
-              <div class="tool-card-name">Coming Soon</div>
+              <span class="tool-card-icon">🎙️</span>
+              <div class="tool-card-name">PDF & 音声</div>
               <div class="tool-card-status">Locked</div>
             </div>
           </div>
@@ -1226,8 +1240,8 @@
 <section id="tools">
   <div class="tools-header reveal">
     <div class="section-label">収録ツール — Feature Set</div>
-    <h2>作業を変える、<br>2つの専門ツール</h2>
-    <p class="section-desc">単なる便利ツールではありません。クリエイターの実務に直結する機能を、美しいUIで提供します。</p>
+    <h2>作業を変える、<br>洗練された3つの機能</h2>
+    <p class="section-desc">単なる便利ツールではありません。クリエイターの実務に直結する機能を、美しいUIで提供します。（さらに、ポータルには画像変換ツールなども内蔵されています）</p>
   </div>
 
   <div class="tools-grid reveal">
@@ -1255,6 +1269,18 @@
         <span class="tool-tag highlight">相互ブラッシュアップ</span>
       </div>
     </div>
+    <div class="tool-feature">
+      <div class="tool-feature-num">Tool 03</div>
+      <span class="tool-feature-icon">🎙️</span>
+      <h3>超高精度PDF翻訳 &<br>AI文字起こし</h3>
+      <p>海外PDFのレイアウトを保ったまま日本語へ自然に翻訳。さらにOpenAI Whisperによる超高精度の音声ファイル文字起こしや、テキストのAI音声読み上げ機能など、SaaSレベルの強力なAIツール群を利用可能です。</p>
+      <div class="tool-tags">
+        <span class="tool-tag highlight">PDF翻訳</span>
+        <span class="tool-tag highlight">AI音声文字起こし</span>
+        <span class="tool-tag highlight">Whisper連携</span>
+        <span class="tool-tag highlight">AI音声読み上げ</span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1278,9 +1304,9 @@
           <span class="unlock-item-icon">🌎</span>
           <div class="unlock-item-label">Translate</div>
         </div>
-        <div class="unlock-item locked-item">
-          <span class="unlock-item-icon">📅</span>
-          <div class="unlock-item-label">Coming</div>
+        <div class="unlock-item blue-on">
+          <span class="unlock-item-icon">🎙️</span>
+          <div class="unlock-item-label">PDF & Voice</div>
         </div>
       </div>
     </div>
@@ -1396,6 +1422,7 @@
       <ul class="pricing-items">
         <li>🔍 高機能QRジェネレーター & リーダー</li>
         <li>🌎 プロ向け翻訳 & プロンプトメーカー</li>
+        <li>🎙️ 超高精度PDF翻訳 & AI文字起こし</li>
         <li>💻 専用Webポータルへの無期限アクセス権</li>
         <li style="color:var(--neon-cyan); font-weight:bold; line-height: 1.4;">✨ 【特典】今後の追加ツール等も基本すべて永続無料<br><span style="font-size: 0.75rem; font-weight: normal; color: var(--text-dim);">※一部の高度な専門ツールのみ有料オプションの予定あり</span></li>
       </ul>
