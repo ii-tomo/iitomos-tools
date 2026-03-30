@@ -302,6 +302,34 @@ body::after {
   letter-spacing: 0.08em;
 }
 
+.coming-soon-badge {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: rgba(255, 204, 0, 0.1);
+  border: 1px solid rgba(255, 204, 0, 0.3);
+  border-radius: 100px;
+  padding: 4px 10px;
+  color: var(--neon-amber);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+}
+
+.tool-card.coming-soon {
+  opacity: 0.8;
+  border-style: dashed;
+  cursor: default;
+}
+
+.tool-card.coming-soon:hover {
+  transform: none;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tool-card.coming-soon .tool-card-status {
+  color: var(--neon-amber);
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed; inset: 0;

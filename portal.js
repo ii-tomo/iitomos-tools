@@ -32,7 +32,8 @@ const toolsData = [
     icon: '🎙️',
     desc: 'AI搭載のPDF翻訳・音声文字起こし。',
     updatedAt: '2026/03/29',
-    isUnlocked: true
+    isUnlocked: false,
+    isComingSoon: true
   }
 ];
 
@@ -60,21 +61,35 @@ const renderToolCards = () => {
 
   toolsData.forEach(tool => {
     const card = document.createElement('div');
-    card.className = `tool-card ${tool.isUnlocked ? 'unlocked' : 'locked'}`;
+    const isComingSoon = tool.isComingSoon === true;
+    card.className = `tool-card ${tool.isUnlocked ? 'unlocked' : (isComingSoon ? 'coming-soon' : 'locked')}`;
+    
+    let badge = '';
+    if (tool.isUnlocked) {
+      badge = '<div class="unlock-badge">ACTIVE</div>';
+    } else if (isComingSoon) {
+      badge = '<div class="coming-soon-badge">COMING SOON</div>';
+    } else {
+      badge = '<div class="lock-badge">🔒</div>';
+    }
+
     card.innerHTML = `
-      ${tool.isUnlocked ? '<div class="unlock-badge">ACTIVE</div>' : '<div class="lock-badge">🔒</div>'}
+      ${badge}
       <span class="tool-card-icon">${tool.icon}</span>
       <div class="tool-card-name">${tool.name}</div>
       <div class="tool-card-desc">${tool.desc}</div>
       <div class="tool-card-footer">
-        <div class="tool-card-status">${tool.isUnlocked ? 'UNLOCKED' : 'LOCKED'}</div>
+        <div class="tool-card-status">${tool.isUnlocked ? 'UNLOCKED' : (isComingSoon ? 'COMING SOON' : 'LOCKED')}</div>
         ${tool.updatedAt ? `<div class="tool-card-update">Updated: ${tool.updatedAt}</div>` : ''}
       </div>
     `;
 
-    // アンロックされている場合はクリックで遷移
+    // 挙動の設定
     if(tool.isUnlocked){
       card.addEventListener('click', () => switchView(tool.id));
+    } else if (isComingSoon) {
+      // 何もしない（またはメッセージを表示）
+      card.style.cursor = 'default';
     } else {
       card.addEventListener('click', () => {
         openModal();
