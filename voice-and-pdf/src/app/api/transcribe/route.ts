@@ -15,6 +15,8 @@ export async function POST(req: Request) {
 
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
+    const durationStr = formData.get('duration') as string | null;
+    const duration = durationStr ? parseFloat(durationStr) : 0;
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
@@ -32,13 +34,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'ログインが必要です' }, { status: 401 });
     }
 
-    // 2. クレジット消費 (1回のリクエストにつき1クレジット)
-    // TODO: ファイルサイズや時間に応じた重量課金も検討可能
-    const creditResult = await consumeCredits(supabase, user.id, 1);
+    // 2. クレジット計算 (15分ごとに1クレジット)
+    // 15分 = 900秒
+    const creditsNeeded = Math.max(1, Math.ceil(duration / 900));
+
+    // 2. クレジット消費
+    const creditResult = await consumeCredits(supabase, user.id, creditsNeeded);
 
     if (!creditResult.success) {
       return NextResponse.json({ 
-        error: 'クレジットが不足しています。プランをアップグレードするかチャージしてください。',
+        error: `クレジットが不足しています。この処理には ${creditsNeeded} クレジット必要です。`,
         code: 'INSUFFICIENT_CREDITS' 
       }, { status: 402 });
     }

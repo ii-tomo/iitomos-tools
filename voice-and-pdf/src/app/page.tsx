@@ -5,20 +5,20 @@ import { AuthStatus } from "@/components/AuthStatus";
 export default function Home() {
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-50 selection:bg-indigo-500/30">
-      {/* Background gradients */}
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-neutral-950 to-neutral-950"></div>
-      
-      {/* Navbar */}
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-neutral-950 to-neutral-950" />
+
       <header className="sticky top-0 z-50 border-b border-white/5 bg-neutral-950/50 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
+          <div className="flex items-center gap-2 text-xl font-bold tracking-tight">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500 shadow-lg shadow-indigo-500/20">
               <Sparkles className="h-5 w-5 text-white" />
             </div>
-            <span>AI Portal<span className="text-indigo-400">.</span></span>
+            <span>
+              AI Portal<span className="text-indigo-400">.</span>
+            </span>
           </div>
-          <div className="flex items-center gap-3 sm:gap-4 text-sm font-medium">
-            <div className="hidden sm:block rounded-full bg-white/10 px-4 py-1.5 text-neutral-300 backdrop-blur-md border border-white/10 shadow-sm">
+          <div className="flex items-center gap-3 text-sm font-medium sm:gap-4">
+            <div className="hidden rounded-full border border-white/10 bg-white/10 px-4 py-1.5 text-neutral-300 shadow-sm backdrop-blur-md sm:block">
               Ver 2.0
             </div>
             <AuthStatus />
@@ -26,48 +26,57 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-24">
-        <div className="mb-12 sm:mb-16 max-w-2xl px-2">
-          <h1 className="text-3xl font-extrabold tracking-tight sm:text-6xl mb-4 sm:mb-6 bg-gradient-to-br from-white to-neutral-500 bg-clip-text text-transparent">
-            AIで作業を高速化
+      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-24">
+        <div className="mb-12 max-w-2xl px-2 sm:mb-16">
+          <h1 className="mb-4 bg-gradient-to-br from-white to-neutral-500 bg-clip-text text-3xl font-extrabold tracking-tight text-transparent sm:mb-6 sm:text-6xl">
+            AIで作業をもっと軽く
           </h1>
-          <p className="text-base sm:text-lg text-neutral-400 leading-relaxed font-medium">
-            超高精度なPDF翻訳ツールと、音声をそのままテキスト化する高度なAIツールを使って、日々のワークフローを加速させましょう。
+          <p className="text-base font-medium leading-relaxed text-neutral-400 sm:text-lg">
+            PDF 翻訳と音声文字起こしを、ひとつのポータルでまとめて使えるツールです。
+            日々の調査、海外資料の読解、会話音声の文字起こしまで、実務に寄り添う AI
+            機能をすぐに使い始められます。
           </p>
         </div>
 
-        <div className="grid gap-4 sm:gap-6 lg:gap-8 sm:grid-cols-2">
-          {/* Card 1: PDF Translator */}
-          <Link href="/pdf-translator" className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8 transition-all hover:bg-white/10 hover:border-white/20 shadow-xl shadow-black/20">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-            <div className="relative z-10 flex flex-col h-full">
-              <div className="mb-4 sm:mb-6 inline-flex rounded-2xl bg-indigo-500/20 p-3 sm:p-4 text-indigo-400 ring-1 ring-indigo-500/30 w-fit">
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:gap-8">
+          <Link
+            href="/pdf-translator"
+            className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/20 transition-all hover:border-white/20 hover:bg-white/10 sm:p-8"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+            <div className="relative z-10 flex h-full flex-col">
+              <div className="mb-4 inline-flex w-fit rounded-2xl bg-indigo-500/20 p-3 text-indigo-400 ring-1 ring-indigo-500/30 sm:mb-6 sm:p-4">
                 <FileText className="h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="mb-3 text-xl sm:text-2xl font-bold">PDF翻訳ツール</h3>
-              <p className="mb-8 text-sm sm:text-base text-neutral-400 leading-relaxed flex-1">
-                英語のPDFファイルをアップロードするだけで、解析から日本語への翻訳までを全自動で行います。抽出結果の音声読み上げも可能です。
+              <h3 className="mb-3 text-xl font-bold sm:text-2xl">PDF 翻訳ツール</h3>
+              <p className="mb-8 flex-1 text-sm leading-relaxed text-neutral-400 sm:text-base">
+                PDF ファイルをアップロードするだけで、読みやすい日本語に翻訳できます。
+                翻訳後は音声読み上げ機能も使えます。
               </p>
-              <div className="flex w-full items-center justify-center sm:justify-start font-bold text-indigo-300 sm:text-indigo-400 group-hover:text-indigo-300 bg-indigo-500/20 sm:bg-transparent px-4 py-3 sm:px-0 sm:py-0 rounded-xl sm:rounded-none transition-all">
-                アプリを開く <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
+              <div className="flex w-full items-center justify-center rounded-xl bg-indigo-500/20 px-4 py-3 font-bold text-indigo-300 transition-all group-hover:text-indigo-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 sm:text-indigo-400">
+                ツールを開く
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
               </div>
             </div>
           </Link>
 
-          {/* Card 2: Voice Transcription */}
-          <Link href="/transcription" className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8 transition-all hover:bg-white/10 hover:border-white/20 shadow-xl shadow-black/20">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
-            <div className="relative z-10 flex flex-col h-full">
-              <div className="mb-4 sm:mb-6 inline-flex rounded-2xl bg-emerald-500/20 p-3 sm:p-4 text-emerald-400 ring-1 ring-emerald-500/30 w-fit">
+          <Link
+            href="/transcription"
+            className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/20 transition-all hover:border-white/20 hover:bg-white/10 sm:p-8"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+            <div className="relative z-10 flex h-full flex-col">
+              <div className="mb-4 inline-flex w-fit rounded-2xl bg-emerald-500/20 p-3 text-emerald-400 ring-1 ring-emerald-500/30 sm:mb-6 sm:p-4">
                 <Mic className="h-6 w-6 sm:h-8 sm:w-8" />
               </div>
-              <h3 className="mb-3 text-xl sm:text-2xl font-bold">音声文字起こし</h3>
-              <p className="mb-8 text-sm sm:text-base text-neutral-400 leading-relaxed flex-1">
-                音声や動画ファイルをアップロード、またはマイクで録音して、高精度なAI文字起こしを実行します。
+              <h3 className="mb-3 text-xl font-bold sm:text-2xl">音声文字起こし</h3>
+              <p className="mb-8 flex-1 text-sm leading-relaxed text-neutral-400 sm:text-base">
+                音声や動画ファイルをアップロードすると、すばやくテキスト化できます。
+                議事録、インタビュー、講義内容の整理にも向いています。
               </p>
-              <div className="flex w-full items-center justify-center sm:justify-start font-bold text-emerald-300 sm:text-emerald-400 group-hover:text-emerald-300 bg-emerald-500/20 sm:bg-transparent px-4 py-3 sm:px-0 sm:py-0 rounded-xl sm:rounded-none transition-all">
-                アプリを開く <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
+              <div className="flex w-full items-center justify-center rounded-xl bg-emerald-500/20 px-4 py-3 font-bold text-emerald-300 transition-all group-hover:text-emerald-300 sm:justify-start sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 sm:text-emerald-400">
+                ツールを開く
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
               </div>
             </div>
           </Link>

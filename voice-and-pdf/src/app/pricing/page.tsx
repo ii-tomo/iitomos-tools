@@ -1,146 +1,164 @@
 "use client";
 
-import { CreditCard, Sparkles, Check, ArrowRight } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { ArrowRight, Check, Crown, RefreshCw, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { SUBSCRIPTION_MONTHLY_PRICE_YEN } from "@/utils/subscription";
 
-const pricingPlans = [
-  {
-    name: "お試しクレジット",
-    amount: 1000,
-    credits: 10,
-    description: "AI翻訳や文字起こしを少し試してみたい方に最適です。",
-    color: "indigo"
-  },
-  {
-    name: "スタンダード補充",
-    badge: "人気",
-    amount: 3000,
-    credits: 35,
-    description: "定期的にAIツールを利用する方向け。15%お得なパッケージです。",
-    color: "emerald"
-  },
-  {
-    name: "プロフェッショナル",
-    amount: 8000,
-    credits: 100,
-    description: "大量のドキュメントや音声を処理する方に。20%お得なプランです。",
-    color: "amber"
-  }
-];
+const monthlyPlan = {
+  name: "プレミアムプラン",
+  amount: SUBSCRIPTION_MONTHLY_PRICE_YEN,
+  description:
+    "PDF 翻訳と音声読み上げを継続的に使いたい方向けの月額プランです。更新タイミングでクレジットが毎月付与されます。",
+  bonuses: [
+    "1ヶ月目: 20クレジット",
+    "2ヶ月目: 22クレジット",
+    "3ヶ月目以降: 25クレジット",
+  ],
+  notes: [
+    "クレジットは更新日に新しい付与量へ置き換わり、繰り越しはできません。",
+    "Stripe の安全な決済ページに移動して手続きします。",
+    "解約やカード変更は契約後にプラン管理画面から行えます。",
+  ],
+};
 
 export default function PricingPage() {
-  const [loading, setLoading] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const subscriptionState = searchParams.get("subscription");
 
-  const handlePurchase = async (plan: typeof pricingPlans[0]) => {
-    setLoading(plan.name);
+  const handleSubscribe = async () => {
+    setLoading(true);
+
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: plan.amount,
-          credits: plan.credits
-        })
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as { url?: string; error?: string };
+
       if (data.url) {
         window.location.href = data.url;
-      } else {
-        alert("エラーが発生しました: " + (data.error || "決済セッションを作成できませんでした。"));
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      alert("通信エラーが発生しました。");
+
+      alert(data.error || "Stripe セッションの準備に失敗しました。");
+    } catch (error) {
+      console.error(error);
+      alert("通信エラーが発生しました。少し時間を置いてもう一度お試しください。");
     } finally {
-      setLoading(null);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl mb-4 bg-gradient-to-br from-white to-neutral-500 bg-clip-text text-transparent">
-            クレジットのチャージ
+    <div className="min-h-screen bg-neutral-950 px-4 py-12 text-neutral-50 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-14 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-400/10 px-4 py-1.5 text-sm font-bold text-amber-200">
+            <Crown className="h-4 w-4" />
+            継続利用向けサブスクリプション
+          </div>
+          <h1 className="mb-4 text-4xl font-extrabold tracking-tight sm:text-6xl">
+            毎月のプランで
+            <span className="bg-gradient-to-r from-amber-300 via-white to-sky-300 bg-clip-text text-transparent">
+              {" "}
+              使い続けやすく
+            </span>
           </h1>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            AI翻訳や文字起こしツールを無制限に活用しましょう。
-            必要な分だけ、いつでも追加可能です。
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-neutral-400">
+            使うほど毎月の付与クレジットが増える設計です。短期の単発利用ではなく、
+            継続して使う方向けのプランです。
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {pricingPlans.map((plan) => (
-            <div 
-              key={plan.name}
-              className={`relative flex flex-col p-8 rounded-3xl border border-white/10 bg-white/5 transition-all hover:bg-white/10 shadow-xl`}
-            >
-              {plan.badge && (
-                <div className="absolute top-0 right-8 -translate-y-1/2 bg-indigo-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg shadow-indigo-500/20 uppercase tracking-widest">
-                  {plan.badge}
-                </div>
-              )}
-              
-              <div className="mb-6">
-                <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-                <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-4xl font-black">¥{plan.amount.toLocaleString()}</span>
-                  <span className="text-sm text-neutral-500 font-bold">税込</span>
-                </div>
-                <p className="text-sm text-neutral-400 leading-relaxed min-h-[3rem]">
-                  {plan.description}
+        {subscriptionState === "cancelled" && (
+          <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-sm text-neutral-300">
+            購入手続きはキャンセルされました。内容を確認してから、必要であれば再度お試しください。
+          </div>
+        )}
+
+        <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr]">
+          <section className="rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-2xl shadow-black/20">
+            <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h2 className="mb-2 text-2xl font-black">{monthlyPlan.name}</h2>
+                <p className="max-w-xl text-sm leading-relaxed text-neutral-400">
+                  {monthlyPlan.description}
                 </p>
               </div>
-
-              <div className="flex-1 mb-8">
-                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/5 mb-6`}>
-                  <Sparkles className={`h-5 w-5 ${plan.color === 'indigo' ? 'text-indigo-400' : plan.color === 'emerald' ? 'text-emerald-400' : 'text-amber-400'}`} />
-                  <span className="text-lg font-black">{plan.credits} クレジット</span>
-                </div>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-3 text-sm text-neutral-300">
-                    <Check className="h-4 w-4 text-neutral-500" />
-                    有効期限なし
-                  </li>
-                  <li className="flex items-center gap-3 text-sm text-neutral-300">
-                    <Check className="h-4 w-4 text-neutral-500" />
-                    全AIツールで利用可能
-                  </li>
-                  <li className="flex items-center gap-3 text-sm text-neutral-300">
-                    <Check className="h-4 w-4 text-neutral-500" />
-                    優先サポート
-                  </li>
-                </ul>
+              <div className="rounded-3xl border border-white/10 bg-neutral-950/70 px-5 py-4 text-right">
+                <p className="text-sm font-bold text-neutral-500">月額料金</p>
+                <p className="text-4xl font-black">¥{monthlyPlan.amount.toLocaleString()}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-neutral-500">
+                  tax included
+                </p>
               </div>
-
-              <button
-                onClick={() => handlePurchase(plan)}
-                disabled={loading !== null}
-                className={`w-full py-4 rounded-2xl font-black text-lg transition-all active:scale-95 flex items-center justify-center gap-2 ${
-                  plan.badge 
-                  ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
-                  : 'bg-white/10 hover:bg-white/20 text-white'
-                } disabled:opacity-50`}
-              >
-                {loading === plan.name ? (
-                  <div className="h-6 w-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    購入する
-                    <ArrowRight className="h-5 w-5" />
-                  </>
-                )}
-              </button>
             </div>
-          ))}
-        </div>
 
-        <div className="mt-16 text-center">
-          <p className="text-sm text-neutral-500 font-medium">
-            ※ 購入したクレジットの返金はできませんのでご了承ください。<br />
-            ※ 決済は Stripe を通じて安全に行われます。
-          </p>
+            <div className="mb-8 rounded-3xl border border-amber-400/15 bg-gradient-to-br from-amber-400/10 via-white/5 to-sky-400/10 p-6">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="rounded-2xl bg-amber-400/15 p-3 text-amber-300">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-200/80">
+                    継続ボーナス
+                  </p>
+                  <h3 className="text-xl font-black">続けるほど毎月の付与量がアップ</h3>
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {monthlyPlan.bonuses.map((bonus) => (
+                  <div
+                    key={bonus}
+                    className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4 text-center text-sm font-bold text-neutral-100"
+                  >
+                    {bonus}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-8 space-y-3">
+              {monthlyPlan.notes.map((note) => (
+                <div key={note} className="flex items-start gap-3 text-sm leading-relaxed text-neutral-300">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                  <span>{note}</span>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={handleSubscribe}
+              disabled={loading}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-5 py-4 text-base font-black text-neutral-950 transition-all hover:bg-amber-300 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? (
+                <>
+                  <RefreshCw className="h-5 w-5 animate-spin" />
+                  決済ページを準備中...
+                </>
+              ) : (
+                <>
+                  プレミアムプランを始める
+                  <ArrowRight className="h-5 w-5" />
+                </>
+              )}
+            </button>
+          </section>
+
+          <aside className="rounded-[32px] border border-white/10 bg-neutral-900/80 p-8">
+            <p className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-neutral-500">
+              Before You Start
+            </p>
+            <h2 className="mb-4 text-2xl font-black">先に確認したいこと</h2>
+            <ul className="space-y-4 text-sm leading-relaxed text-neutral-300">
+              <li>クレジットは更新日に新しい付与量へ置き換わります。余った分は翌月へ持ち越せません。</li>
+              <li>初回の付与も毎月の更新も Stripe Webhook を通して反映されます。</li>
+              <li>契約後はプラン管理画面から解約や支払い情報の更新ができます。</li>
+            </ul>
+          </aside>
         </div>
       </div>
     </div>
