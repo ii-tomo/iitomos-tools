@@ -31,9 +31,8 @@ const toolsData = [
     name: 'PDF & 音声ツール',
     icon: '🎙️',
     desc: 'AI搭載のPDF翻訳・音声文字起こし。',
-    updatedAt: '2026/03/29',
-    isUnlocked: false,
-    isComingSoon: true
+    updatedAt: '2026/04/02',
+    isUnlocked: false
   }
 ];
 
@@ -103,7 +102,7 @@ const renderToolCards = () => {
   const settingsList = document.getElementById('settings-unlocked-list');
   if (settingsList) {
     settingsList.innerHTML = '';
-    toolsData.filter(t => t.isUnlocked && t.id !== 'voice-pdf').forEach(t => {
+    toolsData.filter(t => t.isUnlocked).forEach(t => {
       const span = document.createElement('span');
       span.className = 'badge-tool';
       span.textContent = `${t.icon} ${t.name}`;
