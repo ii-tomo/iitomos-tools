@@ -1,42 +1,43 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
-// 繝・・繝ｫ繝・・繧ｿ縺ｮ螳夂ｾｩ
+// ツールデータの定義
 const toolsData = [
   {
     id: 'qr',
-    name: 'QR繧ｸ繧ｧ繝阪Ξ繝ｼ繧ｿ繝ｼ',
-    icon: '剥',
-    desc: '鄒弱＠縺РR繧ｳ繝ｼ繝峨→遏ｭ邵ｮURL繧堤椪譎ゅ↓菴懈・繝ｻ繧ｷ繧ｧ繧｢縲・,
+    name: 'QRジェネレーター',
+    icon: '🔍',
+    desc: '美しいQRコードと短縮URLを瞬時に作成・シェア。',
     updatedAt: '2026/03/24',
     isUnlocked: false
   },
   {
     id: 'translate',
-    name: '鄙ｻ險ｳ & 繝励Ο繝ｳ繝励ヨ',
-    icon: '月',
-    desc: '譌･闍ｱ騾｣謳ｺ縺ｧAI蜷代￠縺ｮ螳檎挑縺ｪ繝励Ο繝ｳ繝励ヨ繧呈ｧ狗ｯ峨・,
+    name: '翻訳 & プロンプト',
+    icon: '🌎',
+    desc: '日英連携でAI向けの完璧なプロンプトを構築。',
     updatedAt: '2026/03/24',
     isUnlocked: false
   },
   {
     id: 'image-converter',
-    name: '逕ｻ蜒上さ繝ｳ繝舌・繧ｿ繝ｼ',
-    icon: '売',
-    desc: '逕ｻ蜒上ｒ繝峨Λ繝・げ・・ラ繝ｭ繝・・縺ｧ迸ｬ譎ゅ↓繝輔か繝ｼ繝槭ャ繝亥､画鋤縲・,
+    name: '画像コンバーター',
+    icon: '🔄',
+    desc: '画像をドラッグ＆ドロップで瞬時にフォーマット変換。',
     updatedAt: '2026/03/26',
     isUnlocked: false
   },
   {
     id: 'voice-pdf',
-    name: 'PDF & 髻ｳ螢ｰ繝・・繝ｫ',
-    icon: '児・・,
-    desc: 'AI謳ｭ霈峨・PDF鄙ｻ險ｳ繝ｻ髻ｳ螢ｰ譁・ｭ苓ｵｷ縺薙＠縲・,
-    updatedAt: '2026/04/02',
-    isUnlocked: true
+    name: 'PDF & 音声ツール',
+    icon: '🎙️',
+    desc: 'AI搭載のPDF翻訳・音声文字起こし。',
+    updatedAt: '2026/03/29',
+    isUnlocked: false,
+    isComingSoon: true
   }
 ];
 
-// 蛻晄悄險ｭ螳夲ｼ嗟ocalStorage縺九ｉ繧｢繝ｳ繝ｭ繝・け迥ｶ諷九ｒ蠕ｩ蜈・(縺ゅｌ縺ｰ)
+// 初期設定：localStorageからアンロック状態を復元 (あれば)
 let savedUnlocks = JSON.parse(localStorage.getItem('iitomo_unlocked_tools') || '[]');
 let isPremium = localStorage.getItem('iitomo_premium_unlocked') === 'true';
 
@@ -48,7 +49,7 @@ if (savedUnlocks.length > 0) {
   });
 }
 
-// 繝励Ξ繝溘い繝迥ｶ諷九↑繧牙・繝・・繝ｫ繧偵い繝ｳ繝ｭ繝・け謇ｱ縺・↓縺吶ｋ
+// プレミアム状態なら全ツールをアンロック扱いにする
 if (isPremium) {
   toolsData.forEach(tool => tool.isUnlocked = true);
 }
@@ -69,7 +70,7 @@ const renderToolCards = () => {
     } else if (isComingSoon) {
       badge = '<div class="coming-soon-badge">COMING SOON</div>';
     } else {
-      badge = '<div class="lock-badge">白</div>';
+      badge = '<div class="lock-badge">🔒</div>';
     }
 
     card.innerHTML = `
@@ -83,10 +84,12 @@ const renderToolCards = () => {
       </div>
     `;
 
-    // 謖吝虚縺ｮ險ｭ螳・    if(tool.isUnlocked){
+    // 挙動の設定
+    if(tool.isUnlocked){
       card.addEventListener('click', () => switchView(tool.id));
     } else if (isComingSoon) {
-      // 菴輔ｂ縺励↑縺・ｼ医∪縺溘・繝｡繝・そ繝ｼ繧ｸ繧定｡ｨ遉ｺ・・      card.style.cursor = 'default';
+      // 何もしない（またはメッセージを表示）
+      card.style.cursor = 'default';
     } else {
       card.addEventListener('click', () => {
         openModal();
@@ -96,11 +99,11 @@ const renderToolCards = () => {
     container.appendChild(card);
   });
 
-  // 險ｭ螳夂判髱｢縺ｮ繝ｩ繧､繧ｻ繝ｳ繧ｹ荳隕ｧ繧ょ酔譎ゅ↓譖ｴ譁ｰ
+  // 設定画面のライセンス一覧も同時に更新
   const settingsList = document.getElementById('settings-unlocked-list');
   if (settingsList) {
     settingsList.innerHTML = '';
-    toolsData.filter(t => t.isUnlocked).forEach(t => {
+    toolsData.filter(t => t.isUnlocked && t.id !== 'voice-pdf').forEach(t => {
       const span = document.createElement('span');
       span.className = 'badge-tool';
       span.textContent = `${t.icon} ${t.name}`;
@@ -109,20 +112,20 @@ const renderToolCards = () => {
   }
 };
 
-// 繝翫ン繧ｲ繝ｼ繧ｷ繝ｧ繝ｳ縺ｨ繝薙Η繝ｼ縺ｮ蛻・ｊ譖ｿ縺医Ο繧ｸ繝・け
+// ナビゲーションとビューの切り替えロジック
 const navItems = document.querySelectorAll('.nav-item[data-view]');
 const viewSections = document.querySelectorAll('.view-section');
 
 const switchView = (viewId) => {
-  // 縺吶∋縺ｦ縺ｮ繝薙Η繝ｼ繧帝撼陦ｨ遉ｺ
+  // すべてのビューを非表示
   viewSections.forEach(sec => sec.classList.remove('active'));
-  // 繧ｿ繝ｼ繧ｲ繝・ヨ縺ｮ繝薙Η繝ｼ繧定｡ｨ遉ｺ
+  // ターゲットのビューを表示
   const targetView = document.getElementById(`view-${viewId}`);
   if (targetView) {
     targetView.classList.add('active');
   }
 
-  // 繝翫ン繧ｲ繝ｼ繧ｷ繝ｧ繝ｳ縺ｮActive迥ｶ諷九ｒ譖ｴ譁ｰ (繧ｵ繧､繝峨ヰ繝ｼ繝ｻ繝懊ヨ繝繝翫ン荳｡譁ｹ)
+  // ナビゲーションのActive状態を更新 (サイドバー・ボトムナビ両方)
   navItems.forEach(nav => {
     if (nav.dataset.view === viewId) {
       nav.classList.add('active');
@@ -145,13 +148,14 @@ navItems.forEach(nav => {
     } else if (e.data && e.data.type === 'resize') {
       const activeIframe = document.querySelector('.view-section.active .tool-iframe');
       if (activeIframe) {
-        // iframe縺ｮ鬮倥＆繧偵さ繝ｳ繝・Φ繝・↓蜷医ｏ縺帙ｋ縺薙→縺ｧ縲∬ｦｪ繝昴・繧ｿ繝ｫ蛛ｴ縺ｧ繧ｹ繧ｯ繝ｭ繝ｼ繝ｫ縺輔○繧・        activeIframe.parentElement.style.height = (e.data.height) + 'px';
+        // iframeの高さをコンテンツに合わせることで、親ポータル側でスクロールさせる
+        activeIframe.parentElement.style.height = (e.data.height) + 'px';
       }
     }
   });
 
 
-// 繝ｩ繧､繧ｻ繝ｳ繧ｹ繧ｭ繝ｼ蜈･蜉帙Δ繝ｼ繝繝ｫ (Add-on 繝励Ο繝医ち繧､繝・
+// ライセンスキー入力モーダル (Add-on プロトタイプ)
 const btnAddTool = document.getElementById('btn-add-tool');
 const modalOverlay = document.getElementById('add-tool-modal');
 const modalClose = document.getElementById('modal-close');
@@ -179,24 +183,24 @@ modalOverlay.addEventListener('click', (e) => {
 modalSubmit.addEventListener('click', () => {
   const key = keyInput.value.trim().toUpperCase();
   if (!key) {
-    modalError.textContent = '繝ｩ繧､繧ｻ繝ｳ繧ｹ繧ｭ繝ｼ繧貞・蜉帙＠縺ｦ縺上□縺輔＞縲・;
+    modalError.textContent = 'ライセンスキーを入力してください。';
     return;
   }
   
   let unlockedCount = 0;
   let targetTools = [];
 
-  // 繝ｩ繧､繧ｻ繝ｳ繧ｹ繧ｭ繝ｼ縺ｮ蛻､螳壹Ο繧ｸ繝・け
+  // ライセンスキーの判定ロジック
   if (key === 'IITOMO-QR-2026') {
     targetTools = ['qr'];
   } else if (key === 'IITOMO-TRANS-2026') {
     targetTools = ['translate'];
-  } else if (key === 'IITOMO-PRO-2026' || key === 'IITOMO-ADDON' /* 繝・Δ逕ｨ */) {
+  } else if (key === 'IITOMO-PRO-2026' || key === 'IITOMO-ADDON' /* デモ用 */) {
     targetTools = ['qr', 'translate', 'image-converter', 'voice-pdf'];
   }
 
   if (targetTools.length > 0) {
-    // 繝・・繝ｫ迥ｶ諷九・譖ｴ譁ｰ
+    // ツール状態の更新
     targetTools.forEach(id => {
       const tool = toolsData.find(t => t.id === id);
       if (tool && !savedUnlocks.includes(id)) {
@@ -207,22 +211,23 @@ modalSubmit.addEventListener('click', () => {
     });
 
     if (unlockedCount > 0) {
-      // localStorage縺ｸ縺ｮ菫晏ｭ・      localStorage.setItem('iitomo_unlocked_tools', JSON.stringify(savedUnlocks));
+      // localStorageへの保存
+      localStorage.setItem('iitomo_unlocked_tools', JSON.stringify(savedUnlocks));
       renderToolCards();
       modalError.style.color = '#00f5d4';
-      modalError.textContent = '繝ｩ繧､繧ｻ繝ｳ繧ｹ隱崎ｨｼ縺ｫ謌仙粥縺励∪縺励◆・・;
+      modalError.textContent = 'ライセンス認証に成功しました！';
       setTimeout(closeModal, 1500);
     } else {
       modalError.style.color = '#ff5577';
-      modalError.textContent = '縺昴・繧ｭ繝ｼ縺ｯ譌｢縺ｫ譛牙柑蛹悶＆繧後※縺・∪縺吶・;
+      modalError.textContent = 'そのキーは既に有効化されています。';
     }
   } else {
     modalError.style.color = '#ff5577';
-    modalError.textContent = '辟｡蜉ｹ縺ｪ繝ｩ繧､繧ｻ繝ｳ繧ｹ繧ｭ繝ｼ縺ｧ縺吶よｭ｣縺励￥蜈･蜉帙＠縺ｦ縺上□縺輔＞縲・;
+    modalError.textContent = '無効なライセンスキーです。正しく入力してください。';
   }
 });
 
-// 笏笏 Stripe & Premium 騾｣謳ｺ 笏笏
+// ── Stripe & Premium 連携 ──
 
 const updatePremiumUI = () => {
   const banner = document.getElementById('premium-banner');
@@ -252,32 +257,37 @@ const showSuccessToast = () => {
   }
 };
 
-// 雉ｼ蜈･謌仙粥縺ｮ讀懃衍
+// 購入成功の検知
 const checkPurchaseStatus = () => {
   const params = new URLSearchParams(window.location.search);
   if (params.get('purchase') === 'success') {
     isPremium = true;
     localStorage.setItem('iitomo_premium_unlocked', 'true');
-    // 蜈ｨ繝・・繝ｫ繧ｻ繝・ヨ繧呈怏蜉ｹ蛹・    toolsData.forEach(t => t.isUnlocked = true);
+    // 全ツールセットを有効化
+    toolsData.forEach(t => t.isUnlocked = true);
     
     updatePremiumUI();
     renderToolCards();
     showSuccessToast();
 
-    // URL縺九ｉ繝代Λ繝｡繝ｼ繧ｿ繧呈ｶ亥悉・医Μ繝ｭ繝ｼ繝牙ｯｾ遲厄ｼ・    window.history.replaceState({}, document.title, window.location.pathname);
+    // URLからパラメータを消去（リロード対策）
+    window.history.replaceState({}, document.title, window.location.pathname);
   }
 };
 
-// 雉ｼ蜈･繝懊ち繝ｳ縺ｮ蛻晄悄蛹・const btnBuy = document.getElementById('btn-buy-premium');
+// 購入ボタンの初期化
+const btnBuy = document.getElementById('btn-buy-premium');
 if (btnBuy) {
   btnBuy.addEventListener('click', () => {
-    // 繝ｪ繧｢繝ｫStripe繝ｪ繝ｳ繧ｯ縺ｸ遘ｻ蜍・    window.location.href = 'https://buy.stripe.com/fZu7sLbVf9kXa9heUPfw400';
+    // リアルStripeリンクへ移動
+    window.location.href = 'https://buy.stripe.com/fZu7sLbVf9kXa9heUPfw400';
   });
 }
 
-// 笏笏 繝槭う繧ｰ繝ｬ繝ｼ繧ｷ繝ｧ繝ｳ (譌｢蟄倥Θ繝ｼ繧ｶ繝ｼ縺ｸ縺ｮ閾ｪ蜍募渚譏) 笏笏
+// ── マイグレーション (既存ユーザーへの自動反映) ──
 const migrateLegacyUnlocks = () => {
-  // 譌｢蟄倥・縲群R縲阪→縲檎ｿｻ險ｳ縲阪・荳｡譁ｹ繧呈戟縺｣縺ｦ縺・ｋ・昴・繝ｭ迚郁ｳｼ蜈･閠・→縺ｿ縺ｪ縺励・  // 譁ｰ讖溯・・育判蜒上さ繝ｳ繝舌・繧ｿ繝ｼ縲￣DF&髻ｳ螢ｰ・峨ｒ閾ｪ蜍輔〒繧｢繝ｳ繝ｭ繝・け縺吶ｋ
+  // 既存の「QR」と「翻訳」の両方を持っている＝プロ版購入者とみなし、
+  // 新機能（画像コンバーター、PDF&音声）を自動でアンロックする
   if (savedUnlocks.includes('qr') && savedUnlocks.includes('translate')) {
     let updated = false;
     ['image-converter', 'voice-pdf'].forEach(id => {
@@ -297,7 +307,7 @@ const migrateLegacyUnlocks = () => {
   }
 };
 
-// 笏笏 繧｢繝・・繝・・繝域ュ蝣ｱ縺ｮ蜿肴丐 笏笏
+// ── アップデート情報の反映 ──
 const updateToolDates = () => {
   toolsData.forEach(tool => {
     const el = document.getElementById(`update-${tool.id}`);
@@ -307,13 +317,13 @@ const updateToolDates = () => {
   });
 };
 
-// 蛻晄悄螳溯｡・checkPurchaseStatus();
+// 初期実行
+checkPurchaseStatus();
 migrateLegacyUnlocks();
 updateToolDates();
 updatePremiumUI();
 
-// 蛻晄悄繝ｬ繝ｳ繝繝ｪ繝ｳ繧ｰ
+// 初期レンダリング
 renderToolCards();
 
 });
-
