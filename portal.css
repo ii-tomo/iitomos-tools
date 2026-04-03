@@ -103,6 +103,15 @@ body::after {
   border: 1px solid rgba(0,245,212,0.15);
 }
 .nav-item .icon { font-size: 1.1rem; }
+.nav-item.locked {
+  opacity: 0.6;
+}
+.nav-item.locked::after {
+  content: '🔒';
+  font-size: 0.7rem;
+  margin-left: auto;
+  opacity: 0.5;
+}
 .bottom-push { margin-top: auto; }
 
 .btn-add-tool {

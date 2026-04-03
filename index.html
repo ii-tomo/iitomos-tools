@@ -481,7 +481,7 @@
 
   .tools-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 2px;
     border: 1px solid var(--border);
     border-radius: 16px;
@@ -504,7 +504,8 @@
   }
   .tool-feature:nth-child(1)::before { background: var(--grad-main); }
   .tool-feature:nth-child(2)::before { background: var(--grad-gold); }
-  .tool-feature:nth-child(3)::before { background: linear-gradient(135deg, #007aff 0%, #00f5d4 100%); }
+  .tool-feature:nth-child(3)::before { background: linear-gradient(135deg, #ff6b35 0%, #bf5af2 100%); }
+  .tool-feature:nth-child(4)::before { background: linear-gradient(135deg, #007aff 0%, #00f5d4 100%); }
 
   .tool-feature-num {
     font-family: 'Space Mono', monospace;
@@ -524,6 +525,9 @@
     filter: drop-shadow(0 0 12px rgba(191,90,242,0.4));
   }
   .tool-feature:nth-child(3) .tool-feature-icon {
+    filter: drop-shadow(0 0 12px rgba(255,107,53,0.4));
+  }
+  .tool-feature:nth-child(4) .tool-feature-icon {
     filter: drop-shadow(0 0 12px rgba(0,122,255,0.4));
   }
   .tool-feature h3 {
@@ -565,6 +569,11 @@
     background: rgba(191,90,242,0.05);
   }
   .tool-feature:nth-child(3) .tool-tag.highlight {
+    border-color: rgba(255,107,53,0.3);
+    color: #ff9e7d;
+    background: rgba(255,107,53,0.05);
+  }
+  .tool-feature:nth-child(4) .tool-tag.highlight {
     border-color: rgba(0,122,255,0.3);
     color: #4da6ff;
     background: rgba(0,122,255,0.05);
@@ -1185,17 +1194,17 @@
               <div class="tool-card-name">翻訳 & プロンプト</div>
               <div class="tool-card-status">Unlocked</div>
             </div>
-            <div class="tool-card locked">
-              <div class="lock-badge">🔒</div>
+            <div class="tool-card unlocked">
+              <div class="unlock-badge">ACTIVE</div>
               <span class="tool-card-icon">🔄</span>
               <div class="tool-card-name">画像コンバーター</div>
-              <div class="tool-card-status">Locked</div>
+              <div class="tool-card-status">Unlocked</div>
             </div>
-            <div class="tool-card locked">
-              <div class="lock-badge">🔒</div>
+            <div class="tool-card unlocked">
+              <div class="unlock-badge">ACTIVE</div>
               <span class="tool-card-icon">🎙️</span>
               <div class="tool-card-name">PDF & 音声</div>
-              <div class="tool-card-status">Locked</div>
+              <div class="tool-card-status">Unlocked</div>
             </div>
           </div>
         </div>
@@ -1240,8 +1249,8 @@
 <section id="tools">
   <div class="tools-header reveal">
     <div class="section-label">収録ツール — Feature Set</div>
-    <h2>作業を変える、<br>洗練された3つの機能</h2>
-    <p class="section-desc">単なる便利ツールではありません。クリエイターの実務に直結する機能を、美しいUIで提供します。（さらに、ポータルには画像変換ツールなども内蔵されています）</p>
+    <h2>作業を変える、<br>洗練された4つの機能</h2>
+    <p class="section-desc">単なる便利ツールではありません。クリエイターの実務に直結する機能を、美しいUIで提供します。</p>
   </div>
 
   <div class="tools-grid reveal">
@@ -1271,6 +1280,18 @@
     </div>
     <div class="tool-feature">
       <div class="tool-feature-num">Tool 03</div>
+      <span class="tool-feature-icon">🔄</span>
+      <h3>高速・安全な<br>画像コンバーター</h3>
+      <p>画像をドラッグ＆ドロップするだけで、JPEG/PNG/WebP/ICO等の主要形式へ瞬時に変換。サーバーに画像をアップロードしない「クライアント完結型」のため、機密性の高い画像も安全に処理できます。</p>
+      <div class="tool-tags">
+        <span class="tool-tag highlight">フォーマット変換</span>
+        <span class="tool-tag highlight">WebP対応</span>
+        <span class="tool-tag highlight">ICO生成</span>
+        <span class="tool-tag highlight">プライバシー重視</span>
+      </div>
+    </div>
+    <div class="tool-feature">
+      <div class="tool-feature-num">Tool 04</div>
       <span class="tool-feature-icon">🎙️</span>
       <h3>超高精度PDF翻訳 &<br>AI文字起こし</h3>
       <p>海外PDFのレイアウトを保ったまま日本語へ自然に翻訳。さらにOpenAI Whisperによる超高精度の音声ファイル文字起こしや、テキストのAI音声読み上げ機能など、SaaSレベルの強力なAIツール群を利用可能です。</p>
@@ -1303,6 +1324,10 @@
         <div class="unlock-item violet-on">
           <span class="unlock-item-icon">🌎</span>
           <div class="unlock-item-label">Translate</div>
+        </div>
+        <div class="unlock-item" style="border-color: rgba(255,107,53,0.3); background: rgba(255,107,53,0.04);">
+          <span class="unlock-item-icon">🔄</span>
+          <div class="unlock-item-label" style="color: #ff9e7d;">Convert</div>
         </div>
         <div class="unlock-item blue-on">
           <span class="unlock-item-icon">🎙️</span>
@@ -1422,9 +1447,10 @@
       <ul class="pricing-items">
         <li>🔍 高機能QRジェネレーター & リーダー</li>
         <li>🌎 プロ向け翻訳 & プロンプトメーカー</li>
+        <li>🔄 高速・安全な画像コンバーター (NEW)</li>
         <li>🎙️ 超高精度PDF翻訳 & AI文字起こし</li>
         <li>💻 専用Webポータルへの無期限アクセス権</li>
-        <li style="color:var(--neon-cyan); font-weight:bold; line-height: 1.4;">✨ 【特典】今後の追加ツール等も基本すべて永続無料<br><span style="font-size: 0.75rem; font-weight: normal; color: var(--text-dim);">※一部の高度な専門ツールのみ有料オプションの予定あり</span></li>
+        <li style="color:var(--neon-cyan); font-weight:bold; line-height: 1.4;">✨ 【特典】今後のアップデートも基本永続無料</li>
       </ul>
 
       <a href="https://buy.stripe.com/fZu7sLbVf9kXa9heUPfw400" class="btn-line" target="_blank" rel="noopener" id="pricing-buy-btn">

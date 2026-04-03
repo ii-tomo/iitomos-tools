@@ -136,9 +136,41 @@ const switchView = (viewId) => {
 
 navItems.forEach(nav => {
   nav.addEventListener('click', () => {
-    switchView(nav.dataset.view);
+    const viewId = nav.dataset.view;
+    
+    // ダッシュボード、設定などは常に許可
+    if (viewId === 'dashboard' || viewId === 'settings') {
+      switchView(viewId);
+      return;
+    }
+
+    // ツールのアンロック状態を確認
+    const tool = toolsData.find(t => t.id === viewId);
+    if (tool && tool.isUnlocked) {
+      switchView(viewId);
+    } else {
+      // ロックされている場合はモーダルを開く
+      openModal();
+    }
   });
 });
+
+// ナビゲーション（サイドバー・ボトムナビ）のロック表示を更新
+const updateNavStates = () => {
+  navItems.forEach(nav => {
+    const viewId = nav.dataset.view;
+    if (viewId === 'dashboard' || viewId === 'settings') return;
+
+    const tool = toolsData.find(t => t.id === viewId);
+    if (tool) {
+      if (tool.isUnlocked) {
+        nav.classList.remove('locked');
+      } else {
+        nav.classList.add('locked');
+      }
+    }
+  });
+};
 
   // Handle messages from tool iframes (such as custom back buttons & resizes)
   window.addEventListener('message', (e) => {
@@ -213,6 +245,7 @@ modalSubmit.addEventListener('click', () => {
       // localStorageへの保存
       localStorage.setItem('iitomo_unlocked_tools', JSON.stringify(savedUnlocks));
       renderToolCards();
+      updateNavStates(); // ナビ状態も更新
       modalError.style.color = '#00f5d4';
       modalError.textContent = 'ライセンス認証に成功しました！';
       setTimeout(closeModal, 1500);
@@ -267,6 +300,7 @@ const checkPurchaseStatus = () => {
     
     updatePremiumUI();
     renderToolCards();
+    updateNavStates(); // ナビ状態も更新
     showSuccessToast();
 
     // URLからパラメータを消去（リロード対策）
@@ -324,5 +358,6 @@ updatePremiumUI();
 
 // 初期レンダリング
 renderToolCards();
+updateNavStates();
 
 });
