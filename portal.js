@@ -22,8 +22,8 @@ const toolsData = [
     id: 'image-converter',
     name: '画像コンバーター',
     icon: '🔄',
-    desc: '画像をドラッグ＆ドロップで瞬時にフォーマット変換。',
-    updatedAt: '2026/03/26',
+    desc: '画像をドラッグ＆ドロップで瞬時にフォーマット変換。PDFを画像に変換する機能も追加。',
+    updatedAt: '2026/04/12',
     isUnlocked: false
   },
   {
