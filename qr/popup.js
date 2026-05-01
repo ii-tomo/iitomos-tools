@@ -195,7 +195,11 @@ document.addEventListener('DOMContentLoaded', () => {
     async function startCamera() {
         try {
             const constraints = {
-                video: { facingMode: 'environment' }
+                video: {
+                    facingMode: 'environment',
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                }
             };
             videoStream = await navigator.mediaDevices.getUserMedia(constraints);
             cameraPreview.srcObject = videoStream;
